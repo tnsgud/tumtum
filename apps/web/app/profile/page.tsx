@@ -1,7 +1,13 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ProfileInfo } from "@/components/profile-info"
-import { EmotionStats } from "@/components/emotion-stats"
-import { AchievementStats } from "@/components/achievement-stats"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { ProfileInfo } from '@/components/profile-info'
+import { EmotionStats } from '@/components/emotion-stats'
+import { AchievementStats } from '@/components/achievement-stats'
 
 export default function ProfilePage() {
   return (

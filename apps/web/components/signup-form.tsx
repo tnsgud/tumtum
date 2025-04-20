@@ -1,17 +1,17 @@
-import type React from "react"
+import type React from 'react'
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
-import { Github, Mail } from "lucide-react"
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+import { Github, Mail } from 'lucide-react'
 
 export function SignupForm() {
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,7 +24,13 @@ export function SignupForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="name">이름</Label>
-          <Input id="name" placeholder="홍길동" value={name} onChange={(e) => setName(e.target.value)} required />
+          <Input
+            id="name"
+            placeholder="홍길동"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="email">이메일</Label>
@@ -57,7 +63,10 @@ export function SignupForm() {
             required
           />
         </div>
-        <Button type="submit" className="w-full bg-rose-500 hover:bg-rose-600 text-white">
+        <Button
+          type="submit"
+          className="w-full bg-rose-500 hover:bg-rose-600 text-white"
+        >
           회원가입
         </Button>
       </form>

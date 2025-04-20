@@ -1,30 +1,36 @@
-"use client"
+'use client'
 
-import type React from "react"
+import type React from 'react'
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
-import { X } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Badge } from '@/components/ui/badge'
+import { X } from 'lucide-react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Checkbox } from '@/components/ui/checkbox'
 
 export function OnboardingForm() {
-  const [activeTab, setActiveTab] = useState("profile")
-  const [tagInput, setTagInput] = useState("")
+  const [activeTab, setActiveTab] = useState('profile')
+  const [tagInput, setTagInput] = useState('')
   const [interests, setInterests] = useState<string[]>([])
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && tagInput.trim() !== "") {
+    if (e.key === 'Enter' && tagInput.trim() !== '') {
       e.preventDefault()
       if (!interests.includes(tagInput.trim())) {
         setInterests([...interests, tagInput.trim()])
       }
-      setTagInput("")
+      setTagInput('')
     }
   }
 
@@ -33,21 +39,21 @@ export function OnboardingForm() {
   }
 
   const handleNextTab = () => {
-    if (activeTab === "profile") {
-      setActiveTab("goals")
-    } else if (activeTab === "goals") {
-      setActiveTab("routines")
-    } else if (activeTab === "routines") {
+    if (activeTab === 'profile') {
+      setActiveTab('goals')
+    } else if (activeTab === 'goals') {
+      setActiveTab('routines')
+    } else if (activeTab === 'routines') {
       // 온보딩 완료 처리
-      console.log("온보딩 완료")
+      console.log('온보딩 완료')
     }
   }
 
   const handlePrevTab = () => {
-    if (activeTab === "goals") {
-      setActiveTab("profile")
-    } else if (activeTab === "routines") {
-      setActiveTab("goals")
+    if (activeTab === 'goals') {
+      setActiveTab('profile')
+    } else if (activeTab === 'routines') {
+      setActiveTab('goals')
     }
   }
 
@@ -62,7 +68,10 @@ export function OnboardingForm() {
       <TabsContent value="profile" className="space-y-4 pt-4">
         <div className="space-y-2">
           <Label htmlFor="nickname">닉네임</Label>
-          <Input id="nickname" placeholder="텀텀에서 사용할 닉네임을 입력하세요" />
+          <Input
+            id="nickname"
+            placeholder="텀텀에서 사용할 닉네임을 입력하세요"
+          />
         </div>
 
         <div className="space-y-2">
@@ -105,7 +114,10 @@ export function OnboardingForm() {
           <Label>관심 분야</Label>
           <div className="flex flex-wrap gap-2 mb-2">
             {interests.map((interest) => (
-              <Badge key={interest} className="bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300">
+              <Badge
+                key={interest}
+                className="bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300"
+              >
                 {interest}
                 <Button
                   type="button"
@@ -129,7 +141,10 @@ export function OnboardingForm() {
         </div>
 
         <div className="flex justify-end">
-          <Button onClick={handleNextTab} className="bg-rose-500 hover:bg-rose-600 text-white">
+          <Button
+            onClick={handleNextTab}
+            className="bg-rose-500 hover:bg-rose-600 text-white"
+          >
             다음
           </Button>
         </div>
@@ -218,7 +233,10 @@ export function OnboardingForm() {
           <Button onClick={handlePrevTab} variant="outline">
             이전
           </Button>
-          <Button onClick={handleNextTab} className="bg-rose-500 hover:bg-rose-600 text-white">
+          <Button
+            onClick={handleNextTab}
+            className="bg-rose-500 hover:bg-rose-600 text-white"
+          >
             다음
           </Button>
         </div>
@@ -231,7 +249,10 @@ export function OnboardingForm() {
             <div className="rounded-lg border p-4">
               <div className="flex items-center space-x-2">
                 <Checkbox id="routine1" />
-                <label htmlFor="routine1" className="text-sm font-medium leading-none">
+                <label
+                  htmlFor="routine1"
+                  className="text-sm font-medium leading-none"
+                >
                   아침 코딩 1시간
                 </label>
               </div>
@@ -263,7 +284,10 @@ export function OnboardingForm() {
             <div className="rounded-lg border p-4">
               <div className="flex items-center space-x-2">
                 <Checkbox id="routine2" />
-                <label htmlFor="routine2" className="text-sm font-medium leading-none">
+                <label
+                  htmlFor="routine2"
+                  className="text-sm font-medium leading-none"
+                >
                   기술 블로그 작성
                 </label>
               </div>
@@ -295,7 +319,10 @@ export function OnboardingForm() {
             <div className="rounded-lg border p-4">
               <div className="flex items-center space-x-2">
                 <Checkbox id="routine3" />
-                <label htmlFor="routine3" className="text-sm font-medium leading-none">
+                <label
+                  htmlFor="routine3"
+                  className="text-sm font-medium leading-none"
+                >
                   알고리즘 문제 풀기
                 </label>
               </div>
@@ -330,7 +357,9 @@ export function OnboardingForm() {
           <Button onClick={handlePrevTab} variant="outline">
             이전
           </Button>
-          <Button className="bg-rose-500 hover:bg-rose-600 text-white">완료</Button>
+          <Button className="bg-rose-500 hover:bg-rose-600 text-white">
+            완료
+          </Button>
         </div>
       </TabsContent>
     </Tabs>

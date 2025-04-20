@@ -1,9 +1,15 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { MissionList } from "@/components/mission-list"
-import { Plus, Search } from "lucide-react"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { MissionList } from '@/components/mission-list'
+import { Plus, Search } from 'lucide-react'
 
 export default function MissionsPage() {
   return (
@@ -11,7 +17,9 @@ export default function MissionsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">미션 관리</h1>
-          <p className="text-muted-foreground">나의 성장을 위한 미션을 관리해보세요.</p>
+          <p className="text-muted-foreground">
+            나의 성장을 위한 미션을 관리해보세요.
+          </p>
         </div>
         <Button className="bg-rose-500 hover:bg-rose-600 text-white">
           <Plus className="mr-2 h-4 w-4" />새 미션 추가
@@ -27,7 +35,11 @@ export default function MissionsPage() {
             </div>
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input type="search" placeholder="미션 검색..." className="w-full sm:w-[250px] pl-8" />
+              <Input
+                type="search"
+                placeholder="미션 검색..."
+                className="w-full sm:w-[250px] pl-8"
+              />
             </div>
           </div>
         </CardHeader>

@@ -1,11 +1,17 @@
-import { DailyMissions } from "@/components/daily-missions"
-import { EmotionCheck } from "@/components/emotion-check"
-import { GrowthGraph } from "@/components/growth-graph"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowRight, Sparkles } from "lucide-react"
-import Link from "next/link"
+import { DailyMissions } from '@/components/daily-missions'
+import { EmotionCheck } from '@/components/emotion-check'
+import { GrowthGraph } from '@/components/growth-graph'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ArrowRight, Sparkles } from 'lucide-react'
+import Link from 'next/link'
 
 export default function Home() {
   return (
@@ -13,8 +19,12 @@ export default function Home() {
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">안녕하세요, 개발자님 👋</h1>
-            <p className="text-muted-foreground">오늘도 성장하는 하루를 만들어보세요.</p>
+            <h1 className="text-3xl font-bold tracking-tight">
+              안녕하세요, 개발자님 👋
+            </h1>
+            <p className="text-muted-foreground">
+              오늘도 성장하는 하루를 만들어보세요.
+            </p>
           </div>
           <Button className="bg-rose-500 hover:bg-rose-600 text-white">
             <Sparkles className="mr-2 h-4 w-4" />

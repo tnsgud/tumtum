@@ -1,15 +1,24 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Calendar, Edit, Trophy } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Calendar, Edit, Trophy } from 'lucide-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export function ProfileInfo() {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar className="h-16 w-16 border-4 border-rose-100 dark:border-rose-900">
-          <AvatarImage src="/placeholder.svg?height=64&width=64" alt="프로필 이미지" />
+          <AvatarImage
+            src="/placeholder.svg?height=64&width=64"
+            alt="프로필 이미지"
+          />
           <AvatarFallback>JD</AvatarFallback>
         </Avatar>
         <div className="flex-1">
@@ -28,14 +37,18 @@ export function ProfileInfo() {
               <Calendar className="h-4 w-4" />
               <span>연속 기록</span>
             </div>
-            <p className="text-2xl font-bold text-rose-500 dark:text-rose-400">7일</p>
+            <p className="text-2xl font-bold text-rose-500 dark:text-rose-400">
+              7일
+            </p>
           </div>
           <div className="flex flex-col items-center justify-center rounded-lg border p-3">
             <div className="flex items-center gap-1 text-muted-foreground text-sm">
               <Trophy className="h-4 w-4" />
               <span>총 미션</span>
             </div>
-            <p className="text-2xl font-bold text-rose-500 dark:text-rose-400">42개</p>
+            <p className="text-2xl font-bold text-rose-500 dark:text-rose-400">
+              42개
+            </p>
           </div>
         </div>
 

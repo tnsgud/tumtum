@@ -1,17 +1,17 @@
-"use client"
+'use client'
 
-import type React from "react"
+import type React from 'react'
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
-import { Github, Mail } from "lucide-react"
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+import { Github, Mail } from 'lucide-react'
 
 export function LoginForm() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -36,7 +36,11 @@ export function LoginForm() {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="password">비밀번호</Label>
-            <Button variant="link" size="sm" className="text-xs text-rose-500 hover:text-rose-600 p-0">
+            <Button
+              variant="link"
+              size="sm"
+              className="text-xs text-rose-500 hover:text-rose-600 p-0"
+            >
               비밀번호 찾기
             </Button>
           </div>
@@ -48,7 +52,10 @@ export function LoginForm() {
             required
           />
         </div>
-        <Button type="submit" className="w-full bg-rose-500 hover:bg-rose-600 text-white">
+        <Button
+          type="submit"
+          className="w-full bg-rose-500 hover:bg-rose-600 text-white"
+        >
           로그인
         </Button>
       </form>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef } from 'react'
 
 export function GrowthGraph() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -9,7 +9,7 @@ export function GrowthGraph() {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const ctx = canvas.getContext("2d")
+    const ctx = canvas.getContext('2d')
     if (!ctx) return
 
     // 캔버스 크기 설정
@@ -22,11 +22,13 @@ export function GrowthGraph() {
     }
 
     setCanvasSize()
-    window.addEventListener("resize", setCanvasSize)
+    window.addEventListener('resize', setCanvasSize)
 
     // 데이터 (예시)
     const days = 30
-    const missionData = Array.from({ length: days }, () => Math.floor(Math.random() * 100))
+    const missionData = Array.from({ length: days }, () =>
+      Math.floor(Math.random() * 100),
+    )
 
     // 그래프 그리기
     const drawGraph = () => {
@@ -41,7 +43,7 @@ export function GrowthGraph() {
       const graphHeight = height - padding * 2
 
       // 그리드 그리기
-      ctx.strokeStyle = "#e5e7eb"
+      ctx.strokeStyle = '#e5e7eb'
       ctx.lineWidth = 1
 
       // 수평선
@@ -59,8 +61,8 @@ export function GrowthGraph() {
 
       // 그라데이션 설정
       const gradient = ctx.createLinearGradient(0, padding, 0, height - padding)
-      gradient.addColorStop(0, "#f43f5e") // rose-500
-      gradient.addColorStop(1, "#fda4af") // rose-300
+      gradient.addColorStop(0, '#f43f5e') // rose-500
+      gradient.addColorStop(1, '#fda4af') // rose-300
 
       ctx.fillStyle = gradient
 
@@ -73,7 +75,7 @@ export function GrowthGraph() {
       })
 
       // 선 그리기
-      ctx.strokeStyle = "#f43f5e" // rose-500
+      ctx.strokeStyle = '#f43f5e' // rose-500
       ctx.lineWidth = 2
       ctx.beginPath()
 
@@ -94,7 +96,7 @@ export function GrowthGraph() {
     drawGraph()
 
     return () => {
-      window.removeEventListener("resize", setCanvasSize)
+      window.removeEventListener('resize', setCanvasSize)
     }
   }, [])
 

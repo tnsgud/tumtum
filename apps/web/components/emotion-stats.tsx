@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef } from "react"
+import { useEffect, useRef } from 'react'
 
 export function EmotionStats() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -8,7 +8,7 @@ export function EmotionStats() {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const ctx = canvas.getContext("2d")
+    const ctx = canvas.getContext('2d')
     if (!ctx) return
 
     // 캔버스 크기 설정
@@ -21,16 +21,16 @@ export function EmotionStats() {
     }
 
     setCanvasSize()
-    window.addEventListener("resize", setCanvasSize)
+    window.addEventListener('resize', setCanvasSize)
 
     // 감정 데이터 (예시)
     const emotions = [
-      { name: "신남", emoji: "😄", count: 8, color: "#fbbf24" },
-      { name: "행복", emoji: "🙂", count: 12, color: "#10b981" },
-      { name: "보통", emoji: "😐", count: 5, color: "#94a3b8" },
-      { name: "피곤", emoji: "😩", count: 3, color: "#a855f7" },
-      { name: "슬픔", emoji: "😢", count: 1, color: "#3b82f6" },
-      { name: "스트레스", emoji: "😠", count: 1, color: "#f43f5e" },
+      { name: '신남', emoji: '😄', count: 8, color: '#fbbf24' },
+      { name: '행복', emoji: '🙂', count: 12, color: '#10b981' },
+      { name: '보통', emoji: '😐', count: 5, color: '#94a3b8' },
+      { name: '피곤', emoji: '😩', count: 3, color: '#a855f7' },
+      { name: '슬픔', emoji: '😢', count: 1, color: '#3b82f6' },
+      { name: '스트레스', emoji: '😠', count: 1, color: '#f43f5e' },
     ]
 
     const totalCount = emotions.reduce((sum, emotion) => sum + emotion.count, 0)
@@ -47,7 +47,7 @@ export function EmotionStats() {
 
       let startAngle = 0
 
-      for(const emotion of emotions) {
+      for (const emotion of emotions) {
         const sliceAngle = (2 * Math.PI * emotion.count) / totalCount
 
         ctx.beginPath()
@@ -65,7 +65,7 @@ export function EmotionStats() {
         const labelY = centerY + Math.sin(labelAngle) * labelRadius
 
         // 이모지 그리기
-        ctx.font = "20px Arial"
+        ctx.font = '20px Arial'
         ctx.fillText(emotion.emoji, labelX - 10, labelY + 7)
 
         startAngle += sliceAngle
@@ -85,16 +85,20 @@ export function EmotionStats() {
         ctx.fillStyle = emotion.color
         ctx.fillRect(legendX, legendY + row * legendHeight, 15, 15)
 
-        ctx.fillStyle = "#000000"
-        ctx.font = "12px Arial"
-        ctx.fillText(`${emotion.name} (${emotion.count})`, legendX + 20, legendY + row * legendHeight + 12)
+        ctx.fillStyle = '#000000'
+        ctx.font = '12px Arial'
+        ctx.fillText(
+          `${emotion.name} (${emotion.count})`,
+          legendX + 20,
+          legendY + row * legendHeight + 12,
+        )
       })
     }
 
     drawPieChart()
 
     return () => {
-      window.removeEventListener("resize", setCanvasSize)
+      window.removeEventListener('resize', setCanvasSize)
     }
   }, [])
 
