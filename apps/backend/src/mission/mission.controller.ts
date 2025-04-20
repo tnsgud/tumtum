@@ -1,12 +1,27 @@
-import { Controller, Get } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common'
+import { MissionService } from './mission.service'
+import type { CreateMissionDto } from './dto/create-mission.dto'
+import type { UpdateMissionDto } from './dto/update-mission.dto'
 
-@Controller('mission')
+@Controller('missions')
 export class MissionController {
+  constructor(private readonly missionService: MissionService) {}
+
   @Get()
-  getAll() {
-    return [
-      { id: 1, title: 'first mission', done: false },
-      { id: 2, title: 'second mission', done: true },
-    ]
+  findAll() {
+    return this.missionService.findAll()
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.missionService.findOne(id)
   }
 }
