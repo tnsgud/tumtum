@@ -1,20 +1,13 @@
 {
-  "name": "TumTum Monorepo",
-  "dockerFile": "Dockerfile",
-  "context": "..",
-  "settings": {
-    "terminal.integrated.defaultProfile.linux": "bash",
-    "editor.formatOnSave": true
-  },
-  "postCreateCommand": "corepack enable && pnpm install",
-  "features": {
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "20",
-      "pnpm": true
-    }
-  },
-  "mounts": [
-    "source=tumtum-db,target=/workspace/db,type=volume"
-  ],
-  "forwardPorts": [3000, 3333]
+	"name": "TumTum Monorepo",
+	"dockerFile": "Dockerfile",
+	"context": "..",
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "20",
+			"pnpm": true
+		}
+	},
+	"mounts": ["source=tumtum-db,target=/workspace/db,type=volume"],
+	"forwardPorts": [3000, 3333]
 }
