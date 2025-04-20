@@ -13,9 +13,12 @@ export default function Navigation() {
   const pathname = usePathname()
   const isMobile = useMobile()
   const [isOpen, setIsOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   // Close mobile menu when path changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
+    setIsLoggedIn(false)
     setIsOpen(false)
   }, [pathname])
 
@@ -56,7 +59,18 @@ export default function Navigation() {
           </Link>
         </div>
 
-        {isMobile ? (
+        {!isLoggedIn ? (
+          <div className="flex items-center gap-2">
+            <Link href="/login">
+              <Button variant="ghost">로그인</Button>
+            </Link>
+            <Link href="/signup">
+              <Button className="bg-rose-500 hover:bg-rose-600 text-white">
+                회원가입
+              </Button>
+            </Link>
+          </div>
+        ) : isMobile ? (
           <>
             <Button
               variant="ghost"
