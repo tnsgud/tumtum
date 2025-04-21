@@ -6,7 +6,7 @@
     "build": "turbo run build",
     "lint": "biome lint .",
     "format": "biome format . --write",
-    "prepare": "husky"
+    "prepare": "husky init"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
@@ -21,6 +21,6 @@
     }
   },
   "lint-staged": {
-    "*.{js,ts,jsx,tsx,html,css,json,md}": "biome lint"
+    "*.{js,ts,jsx,tsx,html,css,json,md}": ["biome format --write"]
   }
 }
