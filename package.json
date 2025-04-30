@@ -21,7 +21,6 @@
     }
   },
   "lint-staged": {
-    "*.{js,ts,jsx,tsx,json}": ["biome format --write"],
-    "*.md": "biome format --write"
+    "*.{js,ts,jsx,tsx,json}": ["biome format --write"]
   }
 }
