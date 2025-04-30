@@ -6,6 +6,7 @@
     "useIgnoreFile": false
   },
   "files": {
+    "include": ["."],
     "ignoreUnknown": false,
     "ignore": ["dist/", "node_modules/", ".turbo/", ".next"]
   },
