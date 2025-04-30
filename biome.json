@@ -6,9 +6,8 @@
     "useIgnoreFile": false
   },
   "files": {
-    "include": ["."],
     "ignoreUnknown": false,
-    "ignore": ["dist/", "node_modules/", ".turbo/", ".next"]
+    "ignore": ["dist/", "node_modules/", ".turbo/", ".next", "**/*.md"]
   },
   "formatter": {
     "enabled": true,
