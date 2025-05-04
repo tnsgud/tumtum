@@ -1,13 +1,14 @@
 {
   "name": "TumTum Monorepo",
-  "dockerFile": "Dockerfile",
-  "context": "..",
+  "dockerComposeFile": ["docker-compose.yml"],
+  "service": "app",
+  "workspaceFolder": "/workspace/tumtum-monorepo",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
       "version": "20",
-      "pnpm": true
+      "packageManager": "pnpm"
     }
   },
-  "mounts": ["source=tumtum-db,target=/workspace/db,type=volume"],
+  "postCreateCommand": "pnpm install && npx prisma generate",
   "forwardPorts": [3000, 3333]
 }
