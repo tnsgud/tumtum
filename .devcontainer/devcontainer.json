@@ -9,6 +9,6 @@
       "packageManager": "pnpm"
     }
   },
-  "postCreateCommand": "pnpm install && npx prisma generate",
+  
   "forwardPorts": [3000, 3333]
 }
