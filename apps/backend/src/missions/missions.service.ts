@@ -4,7 +4,7 @@ import { CreateMissionDto } from './dto/create-mission.dto'
 import { UpdateMissionDto } from './dto/update-mission.dto'
 
 @Injectable()
-export class MissionService {
+export class MissionsService {
   constructor(private readonly prisma: PrismaService) {}
 
   findAll() {

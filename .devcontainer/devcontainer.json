@@ -1,7 +1,6 @@
 {
   "name": "TumTum Monorepo",
-  "dockerComposeFile": ["docker-compose.yml"],
-  "service": "app",
+  "dockerFile": "./Dockerfile",
   "workspaceFolder": "/workspace/tumtum-monorepo",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
@@ -9,6 +8,5 @@
       "packageManager": "pnpm"
     }
   },
-  
   "forwardPorts": [3000, 3333]
 }
