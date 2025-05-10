@@ -43,3 +43,5 @@ coverage/
 
 # Dependencies
 npm-debug.log
+
+.pnpm-store
