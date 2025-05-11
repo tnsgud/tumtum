@@ -2,87 +2,136 @@
 
 import type React from 'react'
 
-import { useState } from 'react'
+import { z } from 'zod'
+
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Github, Mail } from 'lucide-react'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from './ui/form'
 
-interface FormItem {
+const signupFormSchema = z.object({
+  username: z.string({ required_error: '필수 요소 입니다.' }),
+  email: z
+    .string({ required_error: '필수 요소 입니다.' })
+    .email('올바른 이메일 형식이 아닙니다.'),
+  password: z
+    .string({ required_error: '필수 요소 입니다.' })
+    .min(8, '비밀번호는 최소 8자리 이상이여야 합니다.')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).+$/,
+      '비밀번호는 소문자, 대문자, 숫자, 특수문자를 각각 하나 이상 포함해야 합니다.',
+    ),
+  confirmPassword: z
+    .string({ required_error: '필수 요소 입니다.' })
+    .min(8, '비밀번호는 최소 8자리 이상이여야 합니다.')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).+$/,
+      '비밀번호는 소문자, 대문자, 숫자, 특수문자를 각각 하나 이상 포함해야 합니다.',
+    ),
+})
+
+type SignupFormSchema = z.infer<typeof signupFormSchema>
+type SignupFormItem = {
+  name: keyof SignupFormSchema
   label: string
-  id: string
   placeholder: string
-  state: string
-  setState: React.Dispatch<React.SetStateAction<string>>
+  inputType: 'text' | 'email' | 'password'
 }
 
 export function SignupForm() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-
-  const formItems: FormItem[] = [
+  const form = useForm<SignupFormSchema>({
+    resolver: zodResolver(signupFormSchema),
+    defaultValues: {
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+  })
+  const formItems: SignupFormItem[] = [
     {
-      id: 'name',
+      name: 'username',
       label: '이름',
       placeholder: '홍길동',
-      state: name,
-      setState: setName,
+      inputType: 'text',
     },
     {
-      id: 'email',
+      name: 'email',
       label: '이메일',
       placeholder: 'name@example.com',
-      state: email,
-      setState: setEmail,
+      inputType: 'email',
     },
     {
-      id: 'password',
+      name: 'password',
       label: '비밀번호',
       placeholder: '',
-      state: password,
-      setState: setPassword,
+      inputType: 'password',
     },
     {
-      id: 'confirmPassword',
+      name: 'confirmPassword',
       label: '비밀번호 확인',
       placeholder: '',
-      state: confirmPassword,
-      setState: setConfirmPassword,
+      inputType: 'password',
     },
   ]
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log({ name, email, password, confirmPassword })
-    // 회원가입 로직 구현
+  async function onSubmit({
+    username,
+    email,
+    password,
+    confirmPassword,
+  }: SignupFormSchema) {
+    if (password !== confirmPassword) {
+      form.setError('confirmPassword', {
+        message: '비밀번호가 일치하지 않습니다.',
+      })
+      return
+    }
   }
 
   return (
     <div className="space-y-4">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {formItems.map((val) => (
-          <div key={`signup-form-item-${val.id}`} className="space-y-2">
-            <Label htmlFor="name">{val.label}</Label>
-            <Input
-              id={val.id}
-              placeholder={val.placeholder}
-              value={val.state}
-              onChange={(e) => val.setState(e.target.value)}
-              required
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {formItems.map(({ name, label, placeholder, inputType }) => (
+            <FormField
+              key={`signup-form-item-${name}`}
+              control={form.control}
+              name={name}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-lg font-bold">{label}</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder={placeholder}
+                      type={inputType}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-        ))}
+          ))}
 
-        <Button
-          type="submit"
-          className="w-full bg-rose-500 hover:bg-rose-600 text-white"
-        >
-          회원가입
-        </Button>
-      </form>
+          <Button
+            type="submit"
+            className="w-full bg-rose-500 hover:bg-rose-600 text-white"
+          >
+            회원가입
+          </Button>
+        </form>
+      </Form>
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
