@@ -22,6 +22,11 @@ export default function Home() {
     // 예시를 위해 로그인 상태를 false로 설정
     setIsLoggedIn(false)
     setIsLoading(false)
+
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/missions`).then((res) => {
+      console.log(res.status)
+      console.log(res)
+    })
   }, [])
 
   if (isLoading) {
@@ -39,7 +44,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen mx-auto">
       <LandingHero />
       <LandingFeatures />
       <LandingTestimonials />
