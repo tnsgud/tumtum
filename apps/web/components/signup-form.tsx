@@ -9,11 +9,50 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Github, Mail } from 'lucide-react'
 
+interface FormItem {
+  label: string
+  id: string
+  placeholder: string
+  state: string
+  setState: React.Dispatch<React.SetStateAction<string>>
+}
+
 export function SignupForm() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+
+  const formItems: FormItem[] = [
+    {
+      id: 'name',
+      label: '이름',
+      placeholder: '홍길동',
+      state: name,
+      setState: setName,
+    },
+    {
+      id: 'email',
+      label: '이메일',
+      placeholder: 'name@example.com',
+      state: email,
+      setState: setEmail,
+    },
+    {
+      id: 'password',
+      label: '비밀번호',
+      placeholder: '',
+      state: password,
+      setState: setPassword,
+    },
+    {
+      id: 'confirmPassword',
+      label: '비밀번호 확인',
+      placeholder: '',
+      state: confirmPassword,
+      setState: setConfirmPassword,
+    },
+  ]
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,47 +63,19 @@ export function SignupForm() {
   return (
     <div className="space-y-4">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="name">이름</Label>
-          <Input
-            id="name"
-            placeholder="홍길동"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">이메일</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="name@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="password">비밀번호</Label>
-          <Input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="confirmPassword">비밀번호 확인</Label>
-          <Input
-            id="confirmPassword"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </div>
+        {formItems.map((val) => (
+          <div key={`signup-form-item-${val.id}`} className="space-y-2">
+            <Label htmlFor="name">{val.label}</Label>
+            <Input
+              id={val.id}
+              placeholder={val.placeholder}
+              value={val.state}
+              onChange={(e) => val.setState(e.target.value)}
+              required
+            />
+          </div>
+        ))}
+
         <Button
           type="submit"
           className="w-full bg-rose-500 hover:bg-rose-600 text-white"
