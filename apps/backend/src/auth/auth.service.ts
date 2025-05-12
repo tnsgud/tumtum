@@ -6,6 +6,8 @@ import { PrismaService } from 'src/prisma/prisma.service'
 export class AuthService {
   constructor(private prisma: PrismaService) {}
 
+  // TODO: user로 바꾸기 auth에 있는건 아닌듯
+  // user를 생성하는거니깐 user안에 있는게 맞는듯
   async signup({
     email,
     password,
