@@ -4,6 +4,13 @@ import type React from 'react'
 
 import { z } from 'zod'
 
+import {
+  PASSWORD_LENGTH_ERROR_MESSAGE,
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_REGEX,
+  PASSWORD_REGEX_ERROR_MESSAGE,
+} from '@tumtum/shared'
+
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
@@ -26,18 +33,12 @@ const signupFormSchema = z.object({
     .email('올바른 이메일 형식이 아닙니다.'),
   password: z
     .string({ required_error: '필수 요소 입니다.' })
-    .min(8, '비밀번호는 최소 8자리 이상이여야 합니다.')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).+$/,
-      '비밀번호는 소문자, 대문자, 숫자, 특수문자를 각각 하나 이상 포함해야 합니다.',
-    ),
+    .min(PASSWORD_MIN_LENGTH, PASSWORD_LENGTH_ERROR_MESSAGE)
+    .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR_MESSAGE),
   confirmPassword: z
     .string({ required_error: '필수 요소 입니다.' })
-    .min(8, '비밀번호는 최소 8자리 이상이여야 합니다.')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).+$/,
-      '비밀번호는 소문자, 대문자, 숫자, 특수문자를 각각 하나 이상 포함해야 합니다.',
-    ),
+    .min(PASSWORD_MIN_LENGTH, PASSWORD_LENGTH_ERROR_MESSAGE)
+    .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR_MESSAGE),
 })
 
 type SignupFormSchema = z.infer<typeof signupFormSchema>
@@ -91,12 +92,30 @@ export function SignupForm() {
     password,
     confirmPassword,
   }: SignupFormSchema) {
+    console.log('submit')
     if (password !== confirmPassword) {
       form.setError('confirmPassword', {
         message: '비밀번호가 일치하지 않습니다.',
       })
       return
     }
+
+    const data = {
+      username,
+      email,
+      password,
+    }
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup`,
+      {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    )
   }
 
   return (
