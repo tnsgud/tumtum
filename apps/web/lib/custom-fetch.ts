@@ -1,4 +1,4 @@
-export async function customFetcn<T>(
+export async function customFetch<T>(
   input: RequestInfo,
   options?: RequestInit,
 ): Promise<T> {
