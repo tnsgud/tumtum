@@ -29,6 +29,7 @@ import {
 } from './ui/form'
 
 import { customFetch } from '@/lib/custom-fetch'
+import { useRouter } from 'next/navigation'
 
 const signupFormSchema = z.object({
   username: z.string({ required_error: '필수 요소 입니다.' }),
@@ -54,7 +55,41 @@ type SignupFormItem = {
   inputType: 'text' | 'email' | 'password'
 }
 
+const formItems: SignupFormItem[] = [
+  {
+    name: 'username',
+    label: '이름',
+    placeholder: '홍길동',
+    inputType: 'text',
+  },
+  {
+    name: 'nickname',
+    label: '닉네임',
+    placeholder: '의적',
+    inputType: 'text',
+  },
+  {
+    name: 'email',
+    label: '이메일',
+    placeholder: 'name@example.com',
+    inputType: 'email',
+  },
+  {
+    name: 'password',
+    label: '비밀번호',
+    placeholder: '',
+    inputType: 'password',
+  },
+  {
+    name: 'confirmPassword',
+    label: '비밀번호 확인',
+    placeholder: '',
+    inputType: 'password',
+  },
+]
+
 export function SignupForm() {
+  const router = useRouter()
   const form = useForm<SignupFormSchema>({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
@@ -65,38 +100,6 @@ export function SignupForm() {
       confirmPassword: '',
     },
   })
-  const formItems: SignupFormItem[] = [
-    {
-      name: 'username',
-      label: '이름',
-      placeholder: '홍길동',
-      inputType: 'text',
-    },
-    {
-      name: 'nickname',
-      label: '닉네임',
-      placeholder: '의적',
-      inputType: 'text',
-    },
-    {
-      name: 'email',
-      label: '이메일',
-      placeholder: 'name@example.com',
-      inputType: 'email',
-    },
-    {
-      name: 'password',
-      label: '비밀번호',
-      placeholder: '',
-      inputType: 'password',
-    },
-    {
-      name: 'confirmPassword',
-      label: '비밀번호 확인',
-      placeholder: '',
-      inputType: 'password',
-    },
-  ]
 
   async function onSubmit({
     username,
@@ -128,7 +131,10 @@ export function SignupForm() {
     )
 
     if (!ok) {
+      return
     }
+
+    router.replace('/login')
   }
 
   return (
