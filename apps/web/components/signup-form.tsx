@@ -5,6 +5,8 @@ import type React from 'react'
 import { z } from 'zod'
 
 import {
+  ICreateAccountInput,
+  ICreateAccountOutput,
   PASSWORD_LENGTH_ERROR_MESSAGE,
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
@@ -26,8 +28,11 @@ import {
   FormMessage,
 } from './ui/form'
 
+import { customFetch } from '@/lib/custom-fetch'
+
 const signupFormSchema = z.object({
   username: z.string({ required_error: '필수 요소 입니다.' }),
+  nickname: z.string({ required_error: '필수 요소 입니다.' }),
   email: z
     .string({ required_error: '필수 요소 입니다.' })
     .email('올바른 이메일 형식이 아닙니다.'),
@@ -54,6 +59,7 @@ export function SignupForm() {
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
       username: '',
+      nickname: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -64,6 +70,12 @@ export function SignupForm() {
       name: 'username',
       label: '이름',
       placeholder: '홍길동',
+      inputType: 'text',
+    },
+    {
+      name: 'nickname',
+      label: '닉네임',
+      placeholder: '의적',
       inputType: 'text',
     },
     {
@@ -88,11 +100,11 @@ export function SignupForm() {
 
   async function onSubmit({
     username,
+    nickname,
     email,
     password,
     confirmPassword,
   }: SignupFormSchema) {
-    console.log('submit')
     if (password !== confirmPassword) {
       form.setError('confirmPassword', {
         message: '비밀번호가 일치하지 않습니다.',
@@ -100,22 +112,23 @@ export function SignupForm() {
       return
     }
 
-    const data = {
+    const data: ICreateAccountInput = {
       username,
+      nickname,
       email,
       password,
     }
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup`,
+    const { ok } = await customFetch<ICreateAccountOutput>(
+      '/users/create-account',
       {
         method: 'POST',
         body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        },
       },
     )
+
+    if (!ok) {
+    }
   }
 
   return (
