@@ -6,7 +6,9 @@
     "build": "turbo run build",
     "lint": "biome lint .",
     "format": "biome format . --write",
-    "prepare": "husky"
+    "prepare": "husky",
+    "build:packages": "pnpm -r --filter './packages/**' run build",
+    "add:shared": "pnpm add @tumtum/shared --filter backend --workspace && pnpm add @tumtum/shared --filter web --workspace"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
