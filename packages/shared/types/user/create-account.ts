@@ -8,4 +8,6 @@ export interface ICreateAccountInput {
   password: string
 }
 
-export interface ICreateAccountOutput extends ICoreOutput<UserErrorCode> {}
+export interface ICreateAccountOutput extends ICoreOutput<UserErrorCode> {
+  data?: { name: string; age: number }
+}

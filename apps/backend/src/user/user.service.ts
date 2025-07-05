@@ -14,18 +14,22 @@ export class UserService {
   }: CreateAccountDto): Promise<CreateAccountOutput> {
     const output: CreateAccountOutput = {
       ok: false,
+      error: {},
     }
     try {
-      const { client } = this.prisma
-      const exists = await client.user.findUnique({ where: { email } })
+      const exists = await this.prisma.user.findUnique({ where: { email } })
 
       if (exists) {
         output.error = UserErrorCode.EMAIL_EXISTS
         return output
       }
 
-      const result = await client.user.createWithHashedPassword({
-        data: { email, password, nickname },
+      const result = await this.prisma.createUserWithHashedPassword({
+        data: {
+          email,
+          nickname,
+          password,
+        },
       })
 
       output.ok = true
@@ -34,5 +38,16 @@ export class UserService {
     }
 
     return output
+  }
+
+  async findUserById(id: string) {
+    const output = {}
+
+    try {
+      const row = await this.prisma.user.findUnique({ where: { id } })
+
+      if (!row) {
+      }
+    } catch (error) {}
   }
 }

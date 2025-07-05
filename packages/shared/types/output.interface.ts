@@ -1,4 +1,5 @@
-export interface ICoreOutput<T> {
+export interface ICoreOutput<Y> {
   ok: boolean
-  error?: T
+  data?: any
+  error?: Y
 }
