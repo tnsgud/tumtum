@@ -7,10 +7,10 @@ import { z } from 'zod'
 import {
   ICreateAccountInput,
   ICreateAccountOutput,
-  PASSWORD_LENGTH_ERROR_MESSAGE,
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
-  PASSWORD_REGEX_ERROR_MESSAGE,
+  UserErrorCode,
+  userErrorMessages,
 } from '@tumtum/shared'
 
 import { useForm } from 'react-hook-form'
@@ -39,12 +39,18 @@ const signupFormSchema = z.object({
     .email('올바른 이메일 형식이 아닙니다.'),
   password: z
     .string({ required_error: '필수 요소 입니다.' })
-    .min(PASSWORD_MIN_LENGTH, PASSWORD_LENGTH_ERROR_MESSAGE)
-    .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR_MESSAGE),
+    .min(
+      PASSWORD_MIN_LENGTH,
+      userErrorMessages[UserErrorCode.PASSWORD_IS_SHORT],
+    )
+    .regex(PASSWORD_REGEX, userErrorMessages[UserErrorCode.WEAK_PASSWORD]),
   confirmPassword: z
     .string({ required_error: '필수 요소 입니다.' })
-    .min(PASSWORD_MIN_LENGTH, PASSWORD_LENGTH_ERROR_MESSAGE)
-    .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR_MESSAGE),
+    .min(
+      PASSWORD_MIN_LENGTH,
+      userErrorMessages[UserErrorCode.PASSWORD_IS_SHORT],
+    )
+    .regex(PASSWORD_REGEX, userErrorMessages[UserErrorCode.WEAK_PASSWORD]),
 })
 
 type SignupFormSchema = z.infer<typeof signupFormSchema>
@@ -115,23 +121,23 @@ export function SignupForm() {
       return
     }
 
-    const data: ICreateAccountInput = {
+    const input: ICreateAccountInput = {
       username,
       nickname,
       email,
       password,
     }
 
-    const { ok } = await customFetch<ICreateAccountOutput>(
+    const { ok, error } = await customFetch<ICreateAccountOutput>(
       '/users/create-account',
       {
         method: 'POST',
-        body: JSON.stringify(data),
+        body: JSON.stringify(input),
       },
     )
 
-    if (!ok) {
-      return
+    if (!ok && typeof error !== 'undefined') {
+      return alert(userErrorMessages[error.code as UserErrorCode])
     }
 
     router.replace('/login')

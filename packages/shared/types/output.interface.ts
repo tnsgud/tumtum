@@ -1,5 +1,7 @@
-export interface ICoreOutput<Y> {
+export interface ICoreOutput {
   ok: boolean
-  data?: any
-  error?: Y
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  data: any
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  error: any
 }

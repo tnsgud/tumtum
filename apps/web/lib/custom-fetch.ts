@@ -1,4 +1,6 @@
-export async function customFetch<T>(
+import { ICoreOutput } from '@tumtum/shared'
+
+export async function customFetch<T extends ICoreOutput>(
   input: RequestInfo,
   options?: RequestInit,
 ): Promise<T> {
@@ -11,6 +13,7 @@ export async function customFetch<T>(
 
   const res = await fetch(url, {
     ...options,
+    referrerPolicy: 'no-referrer',
     headers: {
       ...defaultHeaders,
       ...(options?.headers || {}),
@@ -18,8 +21,13 @@ export async function customFetch<T>(
   })
 
   if (!res.ok) {
-    const errorBody = await res.json().catch(() => {})
-    return errorBody
+    const body = await res.json()
+
+    return {
+      ok: false,
+      data: undefined,
+      error: body,
+    } as T
   }
 
   return res.json() as Promise<T>

@@ -25,4 +25,14 @@ export class PrismaService
 
     return await this.user.create({ data })
   }
+
+  async updateWithHashedPassword(args: Prisma.UserUpdateArgs) {
+    const { data } = args
+    if (data.password) {
+      const hashedPassword = await bcrypt.hash(data.password.toString(), 10)
+      data.password = hashedPassword
+    }
+
+    return await this.user.update({ ...args, data })
+  }
 }

@@ -1,4 +1,4 @@
-import { UserErrorCode } from '../../user/user.error-code'
+import { UserError, UserErrorCode } from '../../errors/user'
 import { ICoreOutput } from '../output.interface'
 
 export interface ICreateAccountInput {
@@ -8,6 +8,7 @@ export interface ICreateAccountInput {
   password: string
 }
 
-export interface ICreateAccountOutput extends ICoreOutput<UserErrorCode> {
-  data?: { name: string; age: number }
+export interface ICreateAccountOutput extends ICoreOutput {
+  data: undefined
+  error: UserError | undefined
 }
