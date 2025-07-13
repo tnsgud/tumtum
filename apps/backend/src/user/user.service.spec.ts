@@ -17,7 +17,7 @@ const mockPrismService = {
   },
 }
 
-describe('Find User', () => {
+describe('UserService (Unit Test)', () => {
   let service: UserService
   let prisma: typeof mockPrismService
 
