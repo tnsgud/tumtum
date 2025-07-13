@@ -1,6 +1,7 @@
 export enum UserErrorCode {
   // Create Account
   // Username field
+  // is not exists만 하면 정확히 어디에 없는지 모르기에 정확히 어디에 없는지 명시하는게 좋을듯
   USERNAME_IS_NOT_EXISTS = 'USERNAME_IS_NOT_EXISTS',
   USERNAME_CAN_ONLY_BE_A_STRING = 'USERNAME_CAN_ONLY_BE_A_STRING',
   // Nickname field
@@ -19,6 +20,7 @@ export enum UserErrorCode {
   PASSWORD_CAN_ONLY_BE_A_STRING = 'PASSWORD_CAN_ONLY_BE_A_STRING',
 
   // Find User
+  // Id field
   ID_IS_NOT_EXISTS = 'ID_IS_NOT_EXISTS',
   ID_CAN_ONLY_BE_A_STRING = 'ID_CAN_ONLY_BE_A_STRING',
 }

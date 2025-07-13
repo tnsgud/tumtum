@@ -4,17 +4,16 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
   Patch,
   Post,
   Query,
-  Res,
   UseGuards,
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { CreateAccountDto, CreateAccountOutput } from './dto/create-account.dto'
 import { AuthGuard } from 'src/auth/auth.guard'
 import { FindUserDto } from './dto/find-user.dto'
+import { LoginDto, LoginOutput } from './dto/login.dto'
 
 @UseGuards(AuthGuard)
 @Controller('users')
@@ -23,7 +22,6 @@ export class UserController {
   @Post('/create-account')
   async createAccount(
     @Body() dto: CreateAccountDto,
-    @Res() response: Response,
   ): Promise<CreateAccountOutput> {
     const output = await this.userService.createAccount(dto)
 
@@ -32,6 +30,11 @@ export class UserController {
     }
 
     return output
+  }
+
+  @Post('/login')
+  async login(@Body() dto: LoginDto): Promise<LoginOutput> {
+    return this.userService.login(dto)
   }
 
   @Get('/all')
