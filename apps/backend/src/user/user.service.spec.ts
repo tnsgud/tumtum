@@ -4,11 +4,12 @@ import { JwtService } from '../jwt/jwt.service'
 import { PrismaService } from '../prisma/prisma.service'
 import { User } from '@prisma/client'
 import { FindUserOutput } from './dto/find-user.dto'
+import { UserError, UserErrorCode } from '@tumtum/shared'
 
-const mockJwtService = () => ({
+const mockJwtService = {
   sign: jest.fn(() => 'signed-token-baby'),
   verify: jest.fn(),
-})
+}
 
 const mockPrismService = {
   user: {
@@ -19,7 +20,8 @@ const mockPrismService = {
 
 describe('UserService (Unit Test)', () => {
   let service: UserService
-  let prisma: typeof mockPrismService
+  let prismaService: typeof mockPrismService
+  let jwtService: typeof mockJwtService
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -37,7 +39,8 @@ describe('UserService (Unit Test)', () => {
     }).compile()
 
     service = module.get<UserService>(UserService)
-    prisma = module.get(PrismaService)
+    prismaService = module.get(PrismaService)
+    jwtService = module.get(JwtService)
 
     jest.clearAllMocks()
   })
@@ -46,58 +49,79 @@ describe('UserService (Unit Test)', () => {
     expect(service).toBeDefined()
   })
 
-  describe('Find User', () => {
-    it('find user by id', async () => {
-      const mockUser: User = {
-        id: 'asdf',
-        createdAt: new Date(),
+  // describe('create new account', async () => {})
+
+  describe('Find User by id', () => {
+    const mockUsers: User[] = [
+      {
+        id: 'a',
         email: 'test1@gmail.com',
         nickname: 'test1',
-        password: 'testTest1!',
-      }
+        password: 'Test1!',
+        createdAt: new Date(),
+      },
+      {
+        id: 'b',
+        email: 'test2@gmail.com',
+        nickname: 'test2',
+        password: 'Test2!',
+        createdAt: new Date(),
+      },
+      {
+        id: 'c',
+        email: 'test3@gmail.com',
+        nickname: 'test3',
+        password: 'Test3!',
+        createdAt: new Date(),
+      },
+    ]
+    const mockUser = mockUsers[0]
+
+    it('should find an existing user', async () => {
       const output = new FindUserOutput()
 
       output.ok = true
       output.data = mockUser
 
-      prisma.user.findUnique.mockResolvedValue(mockUser)
+      prismaService.user.findUnique.mockResolvedValue(mockUser)
 
-      const result = await service.findUserById({ id: 'asdf' })
+      const result = await service.findUserById({ id: mockUser.id })
 
       expect(result).toEqual(output)
-      expect(prisma.user.findUnique).toHaveBeenCalledTimes(1)
+      expect(prismaService.user.findUnique).toHaveBeenCalledTimes(1)
     })
 
-    it('find all users', async () => {
-      const mockUsers: User[] = [
-        {
-          id: 'a',
-          email: 'test1@gmail.com',
-          nickname: 'test1',
-          password: 'Test1!',
-          createdAt: new Date(),
-        },
-        {
-          id: 'b',
-          email: 'test2@gmail.com',
-          nickname: 'test2',
-          password: 'Test2!',
-          createdAt: new Date(),
-        },
-        {
-          id: 'c',
-          email: 'test3@gmail.com',
-          nickname: 'test3',
-          password: 'Test3!',
-          createdAt: new Date(),
-        },
-      ]
-      prisma.user.findMany.mockResolvedValue(mockUsers)
+    it('should fail if no user is found', async () => {
+      const output = new FindUserOutput()
+
+      output.ok = false
+      output.error = new UserError(UserErrorCode.ID_IS_NOT_EXISTS)
+
+      prismaService.user.findUnique.mockResolvedValue(null)
+
+      const result = await service.findUserById({ id: '1111' })
+
+      expect(result).toEqual(output)
+      expect(prismaService.user.findUnique).toHaveBeenCalledTimes(1)
+    })
+
+    it('should find all users', async () => {
+      prismaService.user.findMany.mockResolvedValue(mockUsers)
 
       const result = await service.getAllUser()
 
       expect(result).toEqual(mockUsers)
-      expect(prisma.user.findMany).toHaveBeenCalledTimes(1)
+      expect(prismaService.user.findMany).toHaveBeenCalledTimes(1)
     })
+  })
+
+  describe('Create New Account', () => {
+    it('should fail if email is exists', () => {})
+
+    it('should fail if password is weak', () => {})
+
+    it('should fail if email is not validate', () => {})
+
+    it('should success if create new account', () => {})
   })
 })

@@ -106,11 +106,15 @@ export class UserService {
     try {
       const row = await this.prisma.user.findUnique({ where: { id } })
 
-      if (!row) throw new Error()
+      if (!row) {
+        output.error = new UserError(UserErrorCode.ID_IS_NOT_EXISTS)
+        return output
+      }
 
       output.ok = true
       output.data = row
     } catch (error) {
+      console.log(error)
       output.error = error
     }
 
