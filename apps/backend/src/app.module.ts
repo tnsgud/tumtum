@@ -9,6 +9,7 @@ import { JwtModule } from './jwt/jwt.module'
 import { ConfigModule } from '@nestjs/config'
 import { validate } from './config/validation'
 import { JwtMiddleware } from './jwt/jwt.middleware'
+import { AuthModule } from './auth/auth.module'
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { JwtMiddleware } from './jwt/jwt.middleware'
     }),
     JwtModule.forRoot({ secretKey: process.env.SECRET_KEY ?? '' }),
     UserModule,
+    AuthModule,
   ],
 })
 export class AppModule implements NestModule {

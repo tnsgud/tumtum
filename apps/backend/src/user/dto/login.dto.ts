@@ -25,7 +25,7 @@ export class LoginDto implements ILoginInput {
 
 export class LoginOutput implements ILoginOutput {
   ok: boolean
-  data: { accessToken: string; refreshToken: string } | undefined
+  data: { accessToken: string } | undefined
   error: UserError | undefined
 
   constructor() {

@@ -6,16 +6,15 @@ import {
   Get,
   Patch,
   Post,
-  Query,
-  UseGuards,
+  Req,
+  Res,
 } from '@nestjs/common'
+import { Response } from 'express'
 import { UserService } from './user.service'
 import { CreateAccountDto, CreateAccountOutput } from './dto/create-account.dto'
-import { AuthGuard } from 'src/auth/auth.guard'
 import { FindUserDto } from './dto/find-user.dto'
 import { LoginDto, LoginOutput } from './dto/login.dto'
 
-@UseGuards(AuthGuard)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -33,8 +32,15 @@ export class UserController {
   }
 
   @Post('/login')
-  async login(@Body() dto: LoginDto): Promise<LoginOutput> {
-    return this.userService.login(dto)
+  async login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<LoginOutput> {
+    const { output, refreshToken } = await this.userService.login(dto)
+
+    response.cookie('refreshToken', refreshToken, { httpOnly: true })
+
+    return output
   }
 
   @Get('/all')
@@ -42,16 +48,15 @@ export class UserController {
     return this.userService.getAllUser()
   }
 
-  // User 관련 정보를 찾는건 굳이 데이터로 받을 필요 없이 유저 아이디만 내가 얻으면 될듯
-  // Jwt module + middleware까지 만들었는데 이제 적용하면 될 듯
-
-  @Get('/id')
-  async findUser(@Query() params: FindUserDto) {
-    return this.userService.findUserById({ id: params.id })
-  }
+  // @Get('/id')
+  // async findUser(@Query() params: FindUserDto) {
+  //   return this.userService.findUserById({ id: params.id })
+  // }
 
   @Get('/me')
-  async getProfile() {}
+  async getProfile(@Req() request: Request) {
+    console.log(request.headers)
+  }
 
   @Patch('/me')
   async updateProfile() {}

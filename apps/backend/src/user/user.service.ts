@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common'
 import { CreateAccountDto, CreateAccountOutput } from './dto/create-account.dto'
 import { PrismaService } from '../prisma/prisma.service'
 import { UserError, UserErrorCode } from '@tumtum/shared'
-import { JwtService } from '../jwt/jwt.service'
 import { FindUserDto, FindUserOutput } from './dto/find-user.dto'
 import { LoginDto, LoginOutput } from './dto/login.dto'
 import * as bcrypt from 'bcrypt'
+import { AuthService } from 'src/auth/auth.service'
 
 @Injectable()
 export class UserService {
   constructor(
-    private prisma: PrismaService,
-    private readonly jwtService: JwtService,
+    private readonly prismaService: PrismaService,
+    private readonly authService: AuthService,
   ) {}
 
   async createAccount({
@@ -21,7 +21,9 @@ export class UserService {
   }: CreateAccountDto): Promise<CreateAccountOutput> {
     const output = new CreateAccountOutput()
     try {
-      const exists = await this.prisma.user.findUnique({ where: { email } })
+      const exists = await this.prismaService.user.findUnique({
+        where: { email },
+      })
 
       if (exists) {
         output.error = new UserError(UserErrorCode.EMAIL_EXISTS)
@@ -29,7 +31,7 @@ export class UserService {
       }
 
       // WEAK_PASSWORD, INVALID_NICKNAME 관련 에러처리해야함
-      const result = await this.prisma.createUserWithHashedPassword({
+      const result = await this.prismaService.createUserWithHashedPassword({
         data: {
           email,
           nickname,
@@ -47,55 +49,49 @@ export class UserService {
 
   // dto에서 뭐가 와야 할까? email, password로 로그인 시키자
   // login을 시도한 시간도 필요할듯 for logging and token exp
-  async login({ email, password }: LoginDto): Promise<LoginOutput> {
+  async login({
+    email,
+    password,
+  }: LoginDto): Promise<{ output: LoginOutput; refreshToken: string }> {
     const output = new LoginOutput()
+    let refreshToken = ''
 
     try {
       // salt가 필요할 듯 나중에 메소드로 만들어서 재사용가능하게 만들면 좋을듯
       // 아니 쓸모 없을 수도 쓰는 곳이 2곳 말고는 없는거 같기도함
-      const user = await this.prisma.user.findUnique({
+      const user = await this.prismaService.user.findUnique({
         select: { id: true, password: true },
         where: { email },
       })
 
       if (!user) {
         output.error = new UserError(UserErrorCode.EMAIL_IS_NOT_EXISTS)
-        return output
+        return { output, refreshToken }
       }
 
       const ok = await bcrypt.compare(password, user.password)
       if (!ok) {
         // error code 만들어줘야 함
         output.error = new UserError(UserErrorCode.PASSWORD_IS_NOT_EXISTS)
-        return output
+        return { output, refreshToken }
       }
 
-      const accessPayload = {
-        id: user.id,
-        exp: Date.now() + 600 * 60 * 5,
-      }
-      const refreshPayload = {
-        id: user.id,
-        exp: Date.now() + 600 * 60 * 60 * 5,
-      }
-
-      const accessToken = this.jwtService.sign(accessPayload)
-      const refreshToken = this.jwtService.sign(refreshPayload)
+      const accessToken = this.authService.getAccessToken(user.id)
+      refreshToken = await this.authService.getRefreshToken(user.id)
 
       output.ok = true
       output.data = {
         accessToken,
-        refreshToken,
       }
     } catch (error) {
       console.log(error)
     }
 
-    return output
+    return { output, refreshToken }
   }
 
   async getAllUser() {
-    const data = await this.prisma.user.findMany()
+    const data = await this.prismaService.user.findMany()
 
     return data
   }
@@ -104,7 +100,7 @@ export class UserService {
     const output = new FindUserOutput()
 
     try {
-      const row = await this.prisma.user.findUnique({ where: { id } })
+      const row = await this.prismaService.user.findUnique({ where: { id } })
 
       if (!row) {
         output.error = new UserError(UserErrorCode.ID_IS_NOT_EXISTS)

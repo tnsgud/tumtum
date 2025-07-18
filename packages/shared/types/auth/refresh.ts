@@ -1,12 +1,11 @@
 import { UserError } from '../../errors'
 import { ICoreOutput } from '../output.interface'
 
-export interface ILoginInput {
-  email: string
-  password: string
+export interface IRefreshInput {
+  refreshToken: string
 }
 
-export interface ILoginOutput extends ICoreOutput {
+export interface IRefreshOutput extends ICoreOutput {
   data: { accessToken: string } | undefined
   error: UserError | undefined
 }

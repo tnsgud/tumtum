@@ -8,19 +8,13 @@ import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Home, ListTodo, PenLine, User, Menu, X } from 'lucide-react'
 import { useMobile } from '@/hooks/use-mobile'
+import { authStore } from '@/stores/access-token-store'
 
 export default function Navigation() {
   const pathname = usePathname()
   const isMobile = useMobile()
   const [isOpen, setIsOpen] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-
-  // Close mobile menu when path changes
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    setIsLoggedIn(false)
-    setIsOpen(false)
-  }, [pathname])
+  const { isLoggedIn } = authStore()
 
   const navItems = [
     {
