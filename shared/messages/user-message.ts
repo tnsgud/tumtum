@@ -1,5 +1,5 @@
-import { PASSWORD_MIN_LENGTH } from '../../constants/user'
-import { UserErrorCode } from '../../errors/user'
+import { PASSWORD_MIN_LENGTH } from '../constants/user-constant'
+import { UserErrorCode } from '../errors/user-error'
 
 type UserErrorMessages = {
   [key in UserErrorCode]: string

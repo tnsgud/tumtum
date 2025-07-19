@@ -1,4 +1,4 @@
-import { UserError } from '../../errors/user'
+import { UserError } from '../../errors/user-error'
 import { ICoreOutput } from '../output.interface'
 
 export interface ICreateAccountInput {

@@ -1,4 +1,4 @@
-import { CoreError } from '../core-error'
+import { CoreError } from './core-error'
 
 export enum UserErrorCode {
   // Create Account

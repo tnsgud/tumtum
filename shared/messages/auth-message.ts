@@ -1,4 +1,4 @@
-import { AuthErrorCode } from '../../errors'
+import { AuthErrorCode } from '../errors'
 
 type AuthErrorMessage = {
   [key in AuthErrorCode]: string

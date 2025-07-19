@@ -1,5 +1,5 @@
 import { ICoreOutput } from '../output.interface'
-import { AuthError } from '../../errors/auth'
+import { AuthError } from '../../errors/auth-error'
 
 export interface ILoginInput {
   email: string
