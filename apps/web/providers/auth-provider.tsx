@@ -30,7 +30,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     initalizeAuth()
-  })
+  }, [])
+
+  if (isLoading) return <div>loading...</div>
 
   return <>{children}</>
 }

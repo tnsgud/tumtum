@@ -1,3 +1,5 @@
+import { CoreError } from '../core-error'
+
 export enum UserErrorCode {
   // Create Account
   // Username field
@@ -24,3 +26,5 @@ export enum UserErrorCode {
   ID_IS_NOT_EXISTS = 'ID_IS_NOT_EXISTS',
   ID_CAN_ONLY_BE_A_STRING = 'ID_CAN_ONLY_BE_A_STRING',
 }
+
+export class UserError extends CoreError {}

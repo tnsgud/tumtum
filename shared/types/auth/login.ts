@@ -1,5 +1,5 @@
-import { UserError } from '../../errors'
 import { ICoreOutput } from '../output.interface'
+import { AuthError } from '../../errors/auth'
 
 export interface ILoginInput {
   email: string
@@ -8,5 +8,5 @@ export interface ILoginInput {
 
 export interface ILoginOutput extends ICoreOutput {
   data: { accessToken: string } | undefined
-  error: UserError | undefined
+  error: AuthError | undefined
 }

@@ -18,8 +18,8 @@ import { AuthModule } from './auth/auth.module'
       validate,
     }),
     JwtModule.forRoot({ secretKey: process.env.SECRET_KEY ?? '' }),
-    UserModule,
     AuthModule,
+    UserModule,
   ],
 })
 export class AppModule implements NestModule {

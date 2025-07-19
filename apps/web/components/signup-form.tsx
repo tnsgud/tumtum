@@ -5,6 +5,7 @@ import type React from 'react'
 import { z } from 'zod'
 
 import {
+  authErrorMessages,
   ICreateAccountInput,
   ICreateAccountOutput,
   PASSWORD_MIN_LENGTH,
@@ -29,7 +30,7 @@ import {
 } from './ui/form'
 
 import { customFetch } from '@/lib/custom-fetch'
-import { useRouter } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 
 const signupFormSchema = z.object({
   username: z.string({ required_error: '필수 요소 입니다.' }),
@@ -95,7 +96,6 @@ const formItems: SignupFormItem[] = [
 ]
 
 export function SignupForm() {
-  const router = useRouter()
   const form = useForm<SignupFormSchema>({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
@@ -116,7 +116,7 @@ export function SignupForm() {
   }: SignupFormSchema) {
     if (password !== confirmPassword) {
       form.setError('confirmPassword', {
-        message: '비밀번호가 일치하지 않습니다.',
+        message: authErrorMessages.NOT_MATCHED_PASSWORD,
       })
       return
     }
@@ -129,7 +129,7 @@ export function SignupForm() {
     }
 
     const { ok, error } = await customFetch<ICreateAccountOutput>(
-      '/users/create-account',
+      '/auth/create-account',
       {
         method: 'POST',
         body: JSON.stringify(input),
@@ -140,7 +140,7 @@ export function SignupForm() {
       return alert(userErrorMessages[error.code as UserErrorCode])
     }
 
-    router.replace('/login')
+    redirect('/login')
   }
 
   return (
