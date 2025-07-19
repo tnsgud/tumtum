@@ -10,6 +10,7 @@ import { AuthService } from './auth.service'
 import { Request, Response } from 'express'
 import { RefreshDto, RefreshOutput } from './dto/refresh.dto'
 import { LoginDto, LoginOutput } from './dto/login.dto'
+import { CreateAccountDto, CreateAccountOutput } from './dto/create-account.dto'
 
 @Controller('auth')
 export class AuthController {
@@ -31,7 +32,7 @@ export class AuthController {
   async createAccount(
     @Body() dto: CreateAccountDto,
   ): Promise<CreateAccountOutput> {
-    const output = await this.userService.createAccount(dto)
+    const output = await this.authService.createAccount(dto)
 
     if (!output.ok) {
       throw new BadRequestException(output.error)

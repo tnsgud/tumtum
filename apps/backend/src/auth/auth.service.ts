@@ -7,6 +7,7 @@ import { LoginDto, LoginOutput } from './dto/login.dto'
 import { AuthError, authErrorMessages } from '@tumtum/shared'
 import * as bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
+import { CreateAccountDto, CreateAccountOutput } from './dto/create-account.dto'
 
 @Injectable()
 export class AuthService {
