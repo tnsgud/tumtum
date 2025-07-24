@@ -1,3 +1,5 @@
+'use client'
+
 import { DailyMissions } from '@/components/daily-missions'
 import { EmotionCheck } from '@/components/emotion-check'
 import { GrowthGraph } from '@/components/growth-graph'
@@ -10,17 +12,37 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { customFetch } from '@/lib/custom-fetch'
+import { authStore } from '@/stores/auth-store'
+import { missionStore } from '@/stores/mission-store'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import Link from 'next/link'
+import { useEffect } from 'react'
 
 export default function Home() {
+  const { nickname } = authStore()
+  const { missions, complatedMissions, getMissions, updateComplatedMissions } =
+    missionStore()
+
+  useEffect(() => {
+    // Missions 가져오기
+    async function initMission() {
+      if (missions.length === 0) {
+        await getMissions()
+        updateComplatedMissions()
+      }
+    }
+
+    initMission()
+  }, [missions, getMissions, updateComplatedMissions])
+
   return (
-    <div className="container py-6 space-y-8">
+    <div className="container px-4 py-6 space-y-8">
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              안녕하세요, 개발자님 👋
+              안녕하세요, {nickname}님 👋
             </h1>
             <p className="text-muted-foreground">
               오늘도 성장하는 하루를 만들어보세요.
@@ -38,7 +60,9 @@ export default function Home() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="space-y-1">
               <CardTitle>오늘의 미션</CardTitle>
-              <CardDescription>완료한 미션: 2/5</CardDescription>
+              <CardDescription>
+                완료한 미션: {complatedMissions.length}/{missions.length}
+              </CardDescription>
             </div>
             <Link href="/missions">
               <Button variant="ghost" size="sm" className="gap-1">

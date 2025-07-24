@@ -1,33 +1,37 @@
 import {
   PASSWORD_MIN_LENGTH,
-  PASSWORD_LENGTH_ERROR_MESSAGE,
   PASSWORD_REGEX,
-  PASSWORD_REGEX_ERROR_MESSAGE,
   ICreateAccountOutput,
   ICreateAccountInput,
-  UserErrorCode,
+  AuthError,
+  authErrorMessages,
 } from '@tumtum/shared'
 
 import { IsEmail, IsString, Matches, MinLength } from 'class-validator'
 
 export class CreateAccountDto implements ICreateAccountInput {
   @IsString()
-  username: string
-
-  @IsString()
   nickname: string
 
-  @IsEmail()
+  @IsEmail({}, { message: authErrorMessages.NOT_INVALID_EMAIL })
   email: string
 
-  // TODO: 현재 response가 output 형식에 맞지 않기에 수정해야함 ex) filter를 써야한다고 함
   @IsString()
-  @MinLength(PASSWORD_MIN_LENGTH, { message: PASSWORD_LENGTH_ERROR_MESSAGE })
-  @Matches(PASSWORD_REGEX, { message: PASSWORD_REGEX_ERROR_MESSAGE })
+  @MinLength(PASSWORD_MIN_LENGTH, {
+    message: authErrorMessages.PASSWORD_IS_SHORT,
+  })
+  @Matches(PASSWORD_REGEX, { message: authErrorMessages.WEAK_PASSWORD })
   password: string
 }
 
 export class CreateAccountOutput implements ICreateAccountOutput {
   ok: boolean
-  error?: UserErrorCode | undefined
+  data: undefined
+  error: AuthError | undefined
+
+  constructor() {
+    this.ok = false
+    this.data = undefined
+    this.error = undefined
+  }
 }

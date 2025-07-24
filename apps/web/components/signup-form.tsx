@@ -5,14 +5,14 @@ import type React from 'react'
 import { z } from 'zod'
 
 import {
+  authErrorMessages,
   ICreateAccountInput,
   ICreateAccountOutput,
-  PASSWORD_LENGTH_ERROR_MESSAGE,
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
-  PASSWORD_REGEX_ERROR_MESSAGE,
+  UserErrorCode,
+  userErrorMessages,
 } from '@tumtum/shared'
-
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
@@ -32,19 +32,18 @@ import { customFetch } from '@/lib/custom-fetch'
 import { useRouter } from 'next/navigation'
 
 const signupFormSchema = z.object({
-  username: z.string({ required_error: '필수 요소 입니다.' }),
   nickname: z.string({ required_error: '필수 요소 입니다.' }),
   email: z
     .string({ required_error: '필수 요소 입니다.' })
     .email('올바른 이메일 형식이 아닙니다.'),
   password: z
     .string({ required_error: '필수 요소 입니다.' })
-    .min(PASSWORD_MIN_LENGTH, PASSWORD_LENGTH_ERROR_MESSAGE)
-    .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR_MESSAGE),
+    .min(PASSWORD_MIN_LENGTH, authErrorMessages.PASSWORD_IS_SHORT)
+    .regex(PASSWORD_REGEX, authErrorMessages.WEAK_PASSWORD),
   confirmPassword: z
     .string({ required_error: '필수 요소 입니다.' })
-    .min(PASSWORD_MIN_LENGTH, PASSWORD_LENGTH_ERROR_MESSAGE)
-    .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR_MESSAGE),
+    .min(PASSWORD_MIN_LENGTH, authErrorMessages.PASSWORD_IS_SHORT)
+    .regex(PASSWORD_REGEX, authErrorMessages.WEAK_PASSWORD),
 })
 
 type SignupFormSchema = z.infer<typeof signupFormSchema>
@@ -57,15 +56,9 @@ type SignupFormItem = {
 
 const formItems: SignupFormItem[] = [
   {
-    name: 'username',
-    label: '이름',
-    placeholder: '홍길동',
-    inputType: 'text',
-  },
-  {
     name: 'nickname',
     label: '닉네임',
-    placeholder: '의적',
+    placeholder: '홍길동',
     inputType: 'text',
   },
   {
@@ -93,7 +86,6 @@ export function SignupForm() {
   const form = useForm<SignupFormSchema>({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
-      username: '',
       nickname: '',
       email: '',
       password: '',
@@ -102,7 +94,6 @@ export function SignupForm() {
   })
 
   async function onSubmit({
-    username,
     nickname,
     email,
     password,
@@ -110,31 +101,30 @@ export function SignupForm() {
   }: SignupFormSchema) {
     if (password !== confirmPassword) {
       form.setError('confirmPassword', {
-        message: '비밀번호가 일치하지 않습니다.',
+        message: authErrorMessages.NOT_MATCHED_PASSWORD,
       })
       return
     }
 
-    const data: ICreateAccountInput = {
-      username,
+    const input: ICreateAccountInput = {
       nickname,
       email,
       password,
     }
 
-    const { ok } = await customFetch<ICreateAccountOutput>(
-      '/users/create-account',
+    const { ok, error } = await customFetch<ICreateAccountOutput>(
+      '/auth/create-account',
       {
         method: 'POST',
-        body: JSON.stringify(data),
+        body: JSON.stringify(input),
       },
     )
 
-    if (!ok) {
-      return
+    if (!ok && typeof error !== 'undefined') {
+      return alert(userErrorMessages[error.code as UserErrorCode])
     }
 
-    router.replace('/login')
+    router.push('/login')
   }
 
   return (

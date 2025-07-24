@@ -1,53 +1,40 @@
 import { Injectable } from '@nestjs/common'
-import { CreateAccountDto, CreateAccountOutput } from './dto/create-account.dto'
-import { PrismaService } from 'src/prisma/prisma.service'
-import { UserErrorCode } from '@tumtum/shared'
+import {
+  CreateAccountDto,
+  CreateAccountOutput,
+} from '../auth/dto/create-account.dto'
+import { PrismaService } from '../prisma/prisma.service'
+import { UserError, UserErrorCode } from '@tumtum/shared'
+import { FindUserDto, FindUserOutput } from './dto/find-user.dto'
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
-  async createAccount({
-    email,
-    password,
-    username: nickname,
-  }: CreateAccountDto): Promise<CreateAccountOutput> {
-    const output: CreateAccountOutput = {
-      ok: false,
-      error: {},
-    }
+  async getAllUser() {
+    const data = await this.prismaService.user.findMany()
+
+    return data
+  }
+
+  async findUserById({ id }: FindUserDto): Promise<FindUserOutput> {
+    const output = new FindUserOutput()
+
     try {
-      const exists = await this.prisma.user.findUnique({ where: { email } })
+      const row = await this.prismaService.user.findUnique({ where: { id } })
 
-      if (exists) {
-        output.error = UserErrorCode.EMAIL_EXISTS
+      if (!row) {
+        output.error = new UserError(UserErrorCode.ID_IS_NOT_EXISTS)
         return output
       }
 
-      const result = await this.prisma.createUserWithHashedPassword({
-        data: {
-          email,
-          nickname,
-          password,
-        },
-      })
-
       output.ok = true
+      output.data = row
     } catch (error) {
+      console.log(error)
       output.error = error
     }
 
     return output
-  }
-
-  async findUserById(id: string) {
-    const output = {}
-
-    try {
-      const row = await this.prisma.user.findUnique({ where: { id } })
-
-      if (!row) {
-      }
-    } catch (error) {}
   }
 }

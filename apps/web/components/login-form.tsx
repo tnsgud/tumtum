@@ -8,15 +8,32 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Github, Mail } from 'lucide-react'
+import { customFetch } from '@/lib/custom-fetch'
+import { ILoginOutput } from '@tumtum/shared'
+import { useRouter } from 'next/navigation'
+import { authStore } from '@/stores/auth-store'
 
 export function LoginForm() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const { login } = authStore()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log({ email, password })
-    // 로그인 로직 구현
+
+    const res = await customFetch<ILoginOutput>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email: email, password: password }),
+    })
+
+    if (!res.ok || res.data === undefined) {
+      return alert('login 실패')
+    }
+
+    login(res.data.accessToken)
+
+    router.push('/dashboard')
   }
 
   return (

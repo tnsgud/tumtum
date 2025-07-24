@@ -1,30 +1,21 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common'
+import { Controller, Delete, Get, Patch, Req } from '@nestjs/common'
 import { UserService } from './user.service'
-import { CreateAccountDto } from './dto/create-account.dto'
+import { Request } from 'express'
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-  @Post('/create-account')
-  async createAccount(@Body() data: CreateAccountDto) {
-    return this.userService.createAccount(data)
-  }
+  @Get('/all')
+  async getAllUser(@Req() request: Request) {
+    console.log(request.cookies)
 
-  @Get('/:id')
-  async findUser(@Param() params: { id: string }) {
-    return this.userService.findUserById(params.id)
+    return this.userService.getAllUser()
   }
 
   @Get('/me')
-  async getProfile() {}
+  async getProfile(@Req() request: Request) {
+    console.log(request.headers)
+  }
 
   @Patch('/me')
   async updateProfile() {}

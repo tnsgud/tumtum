@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
 import Navigation from '@/components/navigation'
+import AuthProvider from '@/providers/auth-provider'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -37,11 +38,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex min-h-screen flex-col">
-            <Navigation />
-            <main className="flex-1">{children}</main>
-          </div>
-          <Toaster />
+          <AuthProvider>
+            <div className="flex min-h-screen flex-col">
+              <Navigation />
+              <main className="flex-1">{children}</main>
+            </div>
+            <Toaster />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
