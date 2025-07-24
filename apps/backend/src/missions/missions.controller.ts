@@ -1,8 +1,8 @@
 import { Controller, Get, Param, Req } from '@nestjs/common'
 import { MissionsService } from './missions.service'
 import { Request } from 'express'
-import { User } from '@prisma/client'
-import { FindMissionOutput } from './dto/find-mission.dto'
+import { User } from '@tumtum/db'
+import { FindAllMissionsOutuput } from '@tumtum/shared'
 
 interface CustomRequest extends Request {
   user: User
@@ -13,7 +13,7 @@ export class MissionsController {
   constructor(private readonly missionService: MissionsService) {}
 
   @Get()
-  findAll(@Req() request: CustomRequest): Promise<FindMissionOutput> {
+  findAll(@Req() request: CustomRequest): Promise<FindAllMissionsOutuput> {
     const { user } = request
 
     return this.missionService.findAll(user.id)

@@ -1,12 +1,9 @@
 import { UserError } from '../../errors/user-error'
-import { ICoreOutput } from '../output.interface'
+import { CoreOutput } from '../outupt'
+import { User } from '@tumtum/db'
 
-export interface IFindUserInput {
+export interface FindUserInput {
   id: string
 }
 
-export interface IFindUserOutput extends ICoreOutput {
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  data: any
-  error: UserError | undefined
-}
+export type FindUserOutput = CoreOutput<User, UserError>

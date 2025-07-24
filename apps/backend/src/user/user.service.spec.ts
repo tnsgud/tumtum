@@ -2,7 +2,7 @@ import { UserService } from './user.service'
 import { Test } from '@nestjs/testing'
 import { JwtService } from '../jwt/jwt.service'
 import { PrismaService } from '../prisma/prisma.service'
-import { User } from '@prisma/client'
+import { User } from '@tumtum/db'
 import { FindUserOutput } from './dto/find-user.dto'
 import { UserError, UserErrorCode } from '@tumtum/shared'
 
@@ -58,6 +58,7 @@ describe('UserService (Unit Test)', () => {
         email: 'test1@gmail.com',
         nickname: 'test1',
         password: 'Test1!',
+        jti: '',
         createdAt: new Date(),
       },
       {
@@ -65,6 +66,7 @@ describe('UserService (Unit Test)', () => {
         email: 'test2@gmail.com',
         nickname: 'test2',
         password: 'Test2!',
+        jti: '',
         createdAt: new Date(),
       },
       {
@@ -72,6 +74,7 @@ describe('UserService (Unit Test)', () => {
         email: 'test3@gmail.com',
         nickname: 'test3',
         password: 'Test3!',
+        jti: '',
         createdAt: new Date(),
       },
     ]

@@ -1,7 +1,7 @@
 import { authStore } from '@/stores/auth-store'
-import { ICoreOutput } from '@tumtum/shared'
+import { CoreOutput } from '@tumtum/shared'
 
-export async function customFetch<T extends ICoreOutput>(
+export async function customFetch<T extends CoreOutput>(
   input: RequestInfo,
   options?: RequestInit,
 ): Promise<T> {
@@ -15,8 +15,8 @@ export async function customFetch<T extends ICoreOutput>(
 
   const res = await fetch(url, {
     credentials: 'include',
-    ...options,
     referrerPolicy: 'no-referrer',
+    ...options,
     headers: {
       ...defaultHeaders,
       ...(options?.headers || {}),

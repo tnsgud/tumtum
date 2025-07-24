@@ -1,5 +1,6 @@
 import { customFetch } from '@/lib/custom-fetch'
-import { IFindMissionOutput, Mission } from '@tumtum/shared'
+import { Mission } from '@tumtum/db'
+import { FindAllMissionsOutuput } from '@tumtum/shared'
 import { create } from 'zustand'
 
 interface MissionStore {
@@ -19,7 +20,7 @@ export const missionStore = create<MissionStore>((set) => ({
 
   getMissions: async () => {
     const { ok, data, error } =
-      await customFetch<IFindMissionOutput>('/missions')
+      await customFetch<FindAllMissionsOutuput>('/missions')
 
     if (!ok) {
       return console.log(error)
@@ -27,7 +28,7 @@ export const missionStore = create<MissionStore>((set) => ({
 
     set({
       missions: data,
-      complatedMissions: data.filter((m) => m.isCompleted),
+      complatedMissions: data?.filter((m) => m.isCompleted),
     })
   },
   setMission: (mission) => {

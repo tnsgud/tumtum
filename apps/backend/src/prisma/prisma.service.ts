@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common'
-import { PrismaClient, Prisma } from '@prisma/client'
+import { PrismaClient, Prisma } from '@tumtum/db'
 import * as bcrypt from 'bcrypt'
 
 @Injectable()

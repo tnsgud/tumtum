@@ -1,15 +1,13 @@
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
-  ICreateAccountOutput,
-  ICreateAccountInput,
-  AuthError,
+  CreateAccountInput,
   authErrorMessages,
 } from '@tumtum/shared'
 
 import { IsEmail, IsString, Matches, MinLength } from 'class-validator'
 
-export class CreateAccountDto implements ICreateAccountInput {
+export class CreateAccountDto implements CreateAccountInput {
   @IsString()
   nickname: string
 
@@ -22,16 +20,4 @@ export class CreateAccountDto implements ICreateAccountInput {
   })
   @Matches(PASSWORD_REGEX, { message: authErrorMessages.WEAK_PASSWORD })
   password: string
-}
-
-export class CreateAccountOutput implements ICreateAccountOutput {
-  ok: boolean
-  data: undefined
-  error: AuthError | undefined
-
-  constructor() {
-    this.ok = false
-    this.data = undefined
-    this.error = undefined
-  }
 }
