@@ -1,9 +1,4 @@
-import {
-  AuthError,
-  authErrorMessages,
-  ILoginInput,
-  ILoginOutput,
-} from '@tumtum/shared'
+import { authErrorMessages, ILoginInput } from '@tumtum/shared'
 import { IsEmail, IsString } from 'class-validator'
 
 export class LoginDto implements ILoginInput {
@@ -12,16 +7,4 @@ export class LoginDto implements ILoginInput {
 
   @IsString()
   password: string
-}
-
-export class LoginOutput implements ILoginOutput {
-  ok: boolean
-  data: { accessToken: string } | undefined
-  error: AuthError | undefined
-
-  constructor() {
-    this.ok = false
-    this.data = undefined
-    this.error = undefined
-  }
 }

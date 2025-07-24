@@ -9,10 +9,15 @@ import {
 } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { Request, Response } from 'express'
-import { RefreshDto, RefreshOutput } from './dto/refresh.dto'
-import { LoginDto, LoginOutput } from './dto/login.dto'
-import { CreateAccountDto, CreateAccountOutput } from './dto/create-account.dto'
-import { AuthError, AuthErrorCode } from '@tumtum/shared'
+import { LoginDto } from './dto/login.dto'
+import { CreateAccountDto } from './dto/create-account.dto'
+import {
+  AuthError,
+  AuthErrorCode,
+  CreateAccountOutput,
+  LoginOutput,
+  RefreshOutput,
+} from '@tumtum/shared'
 
 @Controller('auth')
 export class AuthController {
@@ -67,7 +72,7 @@ export class AuthController {
     }
 
     const { output, refreshToken: newRefreshToken } =
-      await this.authService.refresh(new RefreshDto(refreshToken))
+      await this.authService.refresh(refreshToken)
 
     response.cookie('refreshToken', newRefreshToken, { httpOnly: true })
 

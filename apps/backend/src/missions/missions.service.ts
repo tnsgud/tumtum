@@ -1,83 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
-import { UpdateMissionDto } from './dto/update-mission.dto'
-import { Mission } from '@prisma/client'
-import { FindMissionOutput } from './dto/find-mission.dto'
+import { createOutput, FindAllMissionsOutuput } from '@tumtum/shared'
 
 @Injectable()
 export class MissionsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(userId: string): Promise<FindMissionOutput> {
-    const output = new FindMissionOutput()
+  async findAll(userId: string): Promise<FindAllMissionsOutuput> {
+    const output = createOutput<FindAllMissionsOutuput>()
 
     output.ok = true
-    output.data = [
-      {
-        id: 'test-id-1',
-        title: 'test',
-        description: 'test row11',
-        category: '',
-        dueDate: new Date(),
-        isCompleted: true,
-      },
-      {
-        id: 'test-id-1',
-        title: 'test',
-        description: 'test row11',
-        category: '',
-        dueDate: new Date(),
-        isCompleted: false,
-      },
-      {
-        id: 'test-id-1',
-        title: 'test',
-        description: 'test row11',
-        category: '',
-        dueDate: new Date(),
-        isCompleted: true,
-      },
-      {
-        id: 'test-id-1',
-        title: 'test',
-        description: 'test row11',
-        category: '',
-        dueDate: new Date(),
-        isCompleted: false,
-      },
-      {
-        id: 'test-id-1',
-        title: 'test',
-        description: 'test row11',
-        category: '',
-        dueDate: new Date(),
-        isCompleted: true,
-      },
-      {
-        id: 'test-id-1',
-        title: 'test',
-        description: 'test row11',
-        category: '',
-        dueDate: new Date(),
-        isCompleted: false,
-      },
-      {
-        id: 'test-id-1',
-        title: 'test',
-        description: 'test row11',
-        category: '',
-        dueDate: new Date(),
-        isCompleted: false,
-      },
-      {
-        id: 'test-id-1',
-        title: 'test',
-        description: 'test row11',
-        category: '',
-        dueDate: new Date(),
-        isCompleted: false,
-      },
-    ]
+    output.data = []
 
     return output
     // return this.prisma.mission.findMany({ orderBy: { createdAt: 'desc' } })
@@ -85,18 +18,5 @@ export class MissionsService {
 
   findOne(id: string) {
     return this.prisma.mission.findUnique({ where: { id } })
-  }
-
-  update(id: string, data: UpdateMissionDto) {
-    return this.prisma.mission.update({
-      where: { id },
-      data,
-    })
-  }
-
-  remove(id: string) {
-    return this.prisma.mission.delete({
-      where: { id },
-    })
   }
 }

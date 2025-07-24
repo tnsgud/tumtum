@@ -8,6 +8,7 @@
     "format": "biome format . --write",
     "prepare": "husky",
     "build:shared": "pnpm -r --filter './shared' run build",
+    "build:db": "turbo run db:build",
     "add:shared": "pnpm add @tumtum/shared --filter backend --workspace && pnpm add @tumtum/shared --filter web --workspace"
   },
   "devDependencies": {

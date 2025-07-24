@@ -1,19 +1,22 @@
 import { Injectable } from '@nestjs/common'
-import { RefreshDto, RefreshOutput } from './dto/refresh.dto'
 import { JwtService } from 'src/jwt/jwt.service'
 import { JwtPayload } from 'jsonwebtoken'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { LoginDto, LoginOutput } from './dto/login.dto'
+import { LoginDto } from './dto/login.dto'
 import {
   AuthError,
   AuthErrorCode,
   authErrorMessages,
+  CreateAccountOutput,
+  createOutput,
+  LoginOutput,
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
+  RefreshOutput,
 } from '@tumtum/shared'
 import * as bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
-import { CreateAccountDto, CreateAccountOutput } from './dto/create-account.dto'
+import { CreateAccountDto } from './dto/create-account.dto'
 
 @Injectable()
 export class AuthService {
@@ -27,7 +30,7 @@ export class AuthService {
     password,
     nickname,
   }: CreateAccountDto): Promise<CreateAccountOutput> {
-    const output = new CreateAccountOutput()
+    const output = createOutput<CreateAccountOutput>()
 
     try {
       const exists = await this.prismaService.user.findUnique({
@@ -71,7 +74,7 @@ export class AuthService {
     password,
   }: LoginDto): Promise<{ output: LoginOutput; refreshToken: string }> {
     const result = {
-      output: new LoginOutput(),
+      output: createOutput<LoginOutput>(),
       refreshToken: '',
     }
     try {
@@ -95,9 +98,7 @@ export class AuthService {
       result.refreshToken = await this.getRefreshToken(user.id)
 
       result.output.ok = true
-      result.output.data = {
-        accessToken,
-      }
+      result.output.data = accessToken
     } catch (error) {
       console.log(error)
     }
@@ -105,11 +106,11 @@ export class AuthService {
     return result
   }
 
-  async refresh({
-    refreshToken: oldRefreshToken,
-  }: RefreshDto): Promise<{ output: RefreshOutput; refreshToken: string }> {
+  async refresh(
+    oldRefreshToken: string,
+  ): Promise<{ output: RefreshOutput; refreshToken: string }> {
     const result = {
-      output: new RefreshOutput(),
+      output: createOutput<RefreshOutput>(),
       refreshToken: '',
     }
 
@@ -135,9 +136,8 @@ export class AuthService {
       const accessToken = this.getAccessToken(user.id, user.nickname)
 
       result.output.ok = true
-      result.output.data = {
-        accessToken,
-      }
+      result.output.data = accessToken
+
       result.refreshToken = await this.getRefreshToken(user.id)
     } catch (error) {
       console.log(error)

@@ -1,13 +1,10 @@
 import { AuthError } from '../../errors'
-import { ICoreOutput } from '../output.interface'
+import { CoreOutput } from '../outupt'
 
-export interface ICreateAccountInput {
+export type CreateAccountInput = {
   nickname: string
   email: string
   password: string
 }
 
-export interface ICreateAccountOutput extends ICoreOutput {
-  data: undefined
-  error: AuthError | undefined
-}
+export type CreateAccountOutput = CoreOutput<undefined, AuthError>

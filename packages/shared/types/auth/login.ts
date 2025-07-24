@@ -1,4 +1,4 @@
-import { ICoreOutput } from '../output.interface'
+import { CoreOutput } from '../outupt'
 import { AuthError } from '../../errors/auth-error'
 
 export interface ILoginInput {
@@ -6,7 +6,4 @@ export interface ILoginInput {
   password: string
 }
 
-export interface ILoginOutput extends ICoreOutput {
-  data: { accessToken: string } | undefined
-  error: AuthError | undefined
-}
+export type LoginOutput = CoreOutput<string, AuthError>

@@ -1,11 +1,4 @@
 import { AuthError } from '../../errors'
-import { ICoreOutput } from '../output.interface'
+import { CoreOutput } from '../outupt'
 
-export interface IRefreshInput {
-  refreshToken: string
-}
-
-export interface IRefreshOutput extends ICoreOutput {
-  data: { accessToken: string } | undefined
-  error: AuthError | undefined
-}
+export type RefreshOutput = CoreOutput<string, AuthError>

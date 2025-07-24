@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Github, Mail } from 'lucide-react'
 import { customFetch } from '@/lib/custom-fetch'
-import { ILoginOutput } from '@tumtum/shared'
+import { LoginOutput } from '@tumtum/shared'
 import { useRouter } from 'next/navigation'
 import { authStore } from '@/stores/auth-store'
 
@@ -22,7 +22,7 @@ export function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const res = await customFetch<ILoginOutput>('/auth/login', {
+    const res = await customFetch<LoginOutput>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email: email, password: password }),
     })
@@ -31,7 +31,7 @@ export function LoginForm() {
       return alert('login 실패')
     }
 
-    login(res.data.accessToken)
+    login(res.data)
 
     router.push('/dashboard')
   }

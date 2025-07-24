@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common'
-import {
-  CreateAccountDto,
-  CreateAccountOutput,
-} from '../auth/dto/create-account.dto'
 import { PrismaService } from '../prisma/prisma.service'
-import { UserError, UserErrorCode } from '@tumtum/shared'
-import { FindUserDto, FindUserOutput } from './dto/find-user.dto'
+import {
+  createOutput,
+  FindUserOutput,
+  UserError,
+  UserErrorCode,
+} from '@tumtum/shared'
+import { FindUserDto } from './dto/find-user.dto'
 
 @Injectable()
 export class UserService {
@@ -18,7 +19,7 @@ export class UserService {
   }
 
   async findUserById({ id }: FindUserDto): Promise<FindUserOutput> {
-    const output = new FindUserOutput()
+    const output = createOutput<FindUserOutput>()
 
     try {
       const row = await this.prismaService.user.findUnique({ where: { id } })

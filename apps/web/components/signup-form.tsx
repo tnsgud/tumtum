@@ -6,8 +6,8 @@ import { z } from 'zod'
 
 import {
   authErrorMessages,
-  ICreateAccountInput,
-  ICreateAccountOutput,
+  CreateAccountInput,
+  CreateAccountOutput,
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
   UserErrorCode,
@@ -106,13 +106,13 @@ export function SignupForm() {
       return
     }
 
-    const input: ICreateAccountInput = {
+    const input: CreateAccountInput = {
       nickname,
       email,
       password,
     }
 
-    const { ok, error } = await customFetch<ICreateAccountOutput>(
+    const { ok, error } = await customFetch<CreateAccountOutput>(
       '/auth/create-account',
       {
         method: 'POST',
