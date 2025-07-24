@@ -1,32 +1,23 @@
 import {
+  AuthError,
+  authErrorMessages,
   ILoginInput,
   ILoginOutput,
-  UserError,
-  UserErrorCode,
-  userErrorMessages,
 } from '@tumtum/shared'
 import { IsEmail, IsString } from 'class-validator'
 
 export class LoginDto implements ILoginInput {
-  @IsString({
-    message: userErrorMessages[UserErrorCode.EMAIL_CAN_ONLY_BE_A_STRING],
-  })
-  @IsEmail(
-    {},
-    { message: userErrorMessages[UserErrorCode.EMAIL_IS_NOT_VALIDATE] },
-  )
+  @IsEmail({}, { message: authErrorMessages.NOT_INVALID_EMAIL })
   email: string
 
-  @IsString({
-    message: userErrorMessages[UserErrorCode.PASSWORD_CAN_ONLY_BE_A_STRING],
-  })
+  @IsString()
   password: string
 }
 
 export class LoginOutput implements ILoginOutput {
   ok: boolean
   data: { accessToken: string } | undefined
-  error: UserError | undefined
+  error: AuthError | undefined
 
   constructor() {
     this.ok = false

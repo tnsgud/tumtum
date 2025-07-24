@@ -16,6 +16,6 @@ export class JwtService {
   }
 
   verify(token: string) {
-    return jwt.verify(token, this.options.secretKey)
+    return jwt.verify(token, this.options.secretKey, {})
   }
 }

@@ -1,14 +1,17 @@
 'use client'
 
 import { customFetch } from '@/lib/custom-fetch'
-import { authStore } from '@/stores/access-token-store'
-import { useEffect, useState } from 'react'
+import { authStore } from '@/stores/auth-store'
+import { IRefreshOutput } from '@tumtum/shared'
+import { useRouter } from 'next/navigation'
+import React, { useState, useEffect } from 'react'
 
-interface AuthProviderProps {
+interface Props {
   children: React.ReactNode
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+export default function AuthProvider({ children }: Props) {
+  const router = useRouter()
   const { isLoggedIn, token, login, logout } = authStore()
   const [isLoading, setIsLoading] = useState(true)
 
@@ -20,9 +23,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       try {
-        const res = await customFetch('/auth/refresh')
-        console.log(res)
+        const res = await customFetch<IRefreshOutput>('/auth/refresh')
+
+        if (!res.ok || res.data === undefined) {
+          return
+        }
+
+        login(res.data.accessToken)
+        router.push('/dashboard')
       } catch (error) {
+        console.log(error)
         logout()
       } finally {
         setIsLoading(false)
@@ -30,9 +40,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     initalizeAuth()
-  }, [])
+  }, [isLoggedIn, token, router, login, logout])
 
-  if (isLoading) return <div>loading...</div>
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse text-rose-500 text-2xl font-bold">
+          텀텀
+        </div>
+      </div>
+    )
+  }
 
   return <>{children}</>
 }

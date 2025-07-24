@@ -1,4 +1,4 @@
-import { UserError } from '../../errors'
+import { AuthError } from '../../errors'
 import { ICoreOutput } from '../output.interface'
 
 export interface IRefreshInput {
@@ -7,5 +7,5 @@ export interface IRefreshInput {
 
 export interface IRefreshOutput extends ICoreOutput {
   data: { accessToken: string } | undefined
-  error: UserError | undefined
+  error: AuthError | undefined
 }

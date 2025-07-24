@@ -1,8 +1,7 @@
-import { UserError } from '../../errors/user-error'
+import { AuthError } from '../../errors'
 import { ICoreOutput } from '../output.interface'
 
 export interface ICreateAccountInput {
-  username: string
   nickname: string
   email: string
   password: string
@@ -10,5 +9,5 @@ export interface ICreateAccountInput {
 
 export interface ICreateAccountOutput extends ICoreOutput {
   data: undefined
-  error: UserError | undefined
+  error: AuthError | undefined
 }

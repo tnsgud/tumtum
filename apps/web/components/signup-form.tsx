@@ -13,7 +13,6 @@ import {
   UserErrorCode,
   userErrorMessages,
 } from '@tumtum/shared'
-
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
@@ -30,28 +29,21 @@ import {
 } from './ui/form'
 
 import { customFetch } from '@/lib/custom-fetch'
-import { redirect, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 const signupFormSchema = z.object({
-  username: z.string({ required_error: '필수 요소 입니다.' }),
   nickname: z.string({ required_error: '필수 요소 입니다.' }),
   email: z
     .string({ required_error: '필수 요소 입니다.' })
     .email('올바른 이메일 형식이 아닙니다.'),
   password: z
     .string({ required_error: '필수 요소 입니다.' })
-    .min(
-      PASSWORD_MIN_LENGTH,
-      userErrorMessages[UserErrorCode.PASSWORD_IS_SHORT],
-    )
-    .regex(PASSWORD_REGEX, userErrorMessages[UserErrorCode.WEAK_PASSWORD]),
+    .min(PASSWORD_MIN_LENGTH, authErrorMessages.PASSWORD_IS_SHORT)
+    .regex(PASSWORD_REGEX, authErrorMessages.WEAK_PASSWORD),
   confirmPassword: z
     .string({ required_error: '필수 요소 입니다.' })
-    .min(
-      PASSWORD_MIN_LENGTH,
-      userErrorMessages[UserErrorCode.PASSWORD_IS_SHORT],
-    )
-    .regex(PASSWORD_REGEX, userErrorMessages[UserErrorCode.WEAK_PASSWORD]),
+    .min(PASSWORD_MIN_LENGTH, authErrorMessages.PASSWORD_IS_SHORT)
+    .regex(PASSWORD_REGEX, authErrorMessages.WEAK_PASSWORD),
 })
 
 type SignupFormSchema = z.infer<typeof signupFormSchema>
@@ -64,15 +56,9 @@ type SignupFormItem = {
 
 const formItems: SignupFormItem[] = [
   {
-    name: 'username',
-    label: '이름',
-    placeholder: '홍길동',
-    inputType: 'text',
-  },
-  {
     name: 'nickname',
     label: '닉네임',
-    placeholder: '의적',
+    placeholder: '홍길동',
     inputType: 'text',
   },
   {
@@ -96,10 +82,10 @@ const formItems: SignupFormItem[] = [
 ]
 
 export function SignupForm() {
+  const router = useRouter()
   const form = useForm<SignupFormSchema>({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
-      username: '',
       nickname: '',
       email: '',
       password: '',
@@ -108,7 +94,6 @@ export function SignupForm() {
   })
 
   async function onSubmit({
-    username,
     nickname,
     email,
     password,
@@ -122,7 +107,6 @@ export function SignupForm() {
     }
 
     const input: ICreateAccountInput = {
-      username,
       nickname,
       email,
       password,
@@ -140,7 +124,7 @@ export function SignupForm() {
       return alert(userErrorMessages[error.code as UserErrorCode])
     }
 
-    redirect('/login')
+    router.push('/login')
   }
 
   return (

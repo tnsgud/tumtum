@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config'
 import { validate } from './config/validation'
 import { JwtMiddleware } from './jwt/jwt.middleware'
 import { AuthModule } from './auth/auth.module'
+import { MissionsModule } from './missions/missions.module'
 
 @Module({
   imports: [
@@ -20,12 +21,13 @@ import { AuthModule } from './auth/auth.module'
     JwtModule.forRoot({ secretKey: process.env.SECRET_KEY ?? '' }),
     AuthModule,
     UserModule,
+    MissionsModule,
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(JwtMiddleware)
-      .forRoutes({ path: '/users/all', method: RequestMethod.ALL })
+      .forRoutes({ path: '/*', method: RequestMethod.ALL })
   }
 }

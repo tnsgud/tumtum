@@ -4,7 +4,13 @@ import { JwtService } from 'src/jwt/jwt.service'
 import { JwtPayload } from 'jsonwebtoken'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { LoginDto, LoginOutput } from './dto/login.dto'
-import { AuthError, authErrorMessages } from '@tumtum/shared'
+import {
+  AuthError,
+  AuthErrorCode,
+  authErrorMessages,
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_REGEX,
+} from '@tumtum/shared'
 import * as bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 import { CreateAccountDto, CreateAccountOutput } from './dto/create-account.dto'
@@ -19,21 +25,32 @@ export class AuthService {
   async createAccount({
     email,
     password,
-    username: nickname,
+    nickname,
   }: CreateAccountDto): Promise<CreateAccountOutput> {
     const output = new CreateAccountOutput()
+
     try {
       const exists = await this.prismaService.user.findUnique({
         where: { email },
       })
 
       if (exists) {
-        output.error = new UserError(UserErrorCode.EMAIL_EXISTS)
+        output.error = new AuthError(AuthErrorCode.EMAIL_ALREADY_EXISTS)
         return output
       }
 
-      // WEAK_PASSWORD, INVALID_NICKNAME 관련 에러처리해야함
-      const result = await this.prismaService.createUserWithHashedPassword({
+      if (password.length < PASSWORD_MIN_LENGTH) {
+        output.error = new AuthError(AuthErrorCode.PASSWORD_IS_SHORT)
+        return output
+      }
+
+      const regexp = new RegExp(PASSWORD_REGEX)
+      if (!regexp.test(password)) {
+        output.error = new AuthError(AuthErrorCode.WEAK_PASSWORD)
+        return output
+      }
+
+      await this.prismaService.createUserWithHashedPassword({
         data: {
           email,
           nickname,
@@ -49,8 +66,6 @@ export class AuthService {
     return output
   }
 
-  // dto에서 뭐가 와야 할까? email, password로 로그인 시키자
-  // login을 시도한 시간도 필요할듯 for logging and token exp
   async login({
     email,
     password,
@@ -60,29 +75,23 @@ export class AuthService {
       refreshToken: '',
     }
     try {
-      // salt가 필요할 듯 나중에 메소드로 만들어서 재사용가능하게 만들면 좋을듯
-      // 아니 쓸모 없을 수도 쓰는 곳이 2곳 말고는 없는거 같기도함
       const user = await this.prismaService.user.findUnique({
-        select: { id: true, password: true },
+        select: { id: true, password: true, nickname: true },
         where: { email },
       })
 
       if (!user) {
-        result.output.error = new AuthError(
-          authErrorMessages.NOT_REGISTERED_EMAIL,
-        )
+        result.output.error = new AuthError(AuthErrorCode.NOT_REGISTERED_EMAIL)
         return result
       }
 
       const ok = await bcrypt.compare(password, user.password)
       if (!ok) {
-        result.output.error = new AuthError(
-          authErrorMessages.NOT_MATCHED_PASSWORD,
-        )
+        result.output.error = new AuthError(AuthErrorCode.NOT_MATCHED_PASSWORD)
         return result
       }
 
-      const accessToken = this.getAccessToken(user.id)
+      const accessToken = this.getAccessToken(user.id, user.nickname)
       result.refreshToken = await this.getRefreshToken(user.id)
 
       result.output.ok = true
@@ -123,7 +132,7 @@ export class AuthService {
         return result
       }
 
-      const accessToken = this.getAccessToken(user.id)
+      const accessToken = this.getAccessToken(user.id, user.nickname)
 
       result.output.ok = true
       result.output.data = {
@@ -137,9 +146,10 @@ export class AuthService {
     return result
   }
 
-  getAccessToken(userId: string): string {
+  getAccessToken(userId: string, nickname: string): string {
     const payload = {
       sub: userId,
+      nickname,
     }
 
     return this.jwtService.sign(payload, true)

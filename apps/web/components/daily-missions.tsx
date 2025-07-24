@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Clock, Code, BookOpen, Coffee, Brain } from 'lucide-react'
+import { missionStore } from '@/stores/mission-store'
 
 type Mission = {
   id: string
@@ -16,7 +17,7 @@ type Mission = {
 }
 
 export function DailyMissions() {
-  const [missions, setMissions] = useState<Mission[]>([
+  /*const [missions, setMissions] = useState<Mission[]>([
     {
       id: '1',
       title: 'React 컴포넌트 리팩토링하기',
@@ -53,21 +54,25 @@ export function DailyMissions() {
       timeEstimate: 90,
     },
   ])
+    */
 
-  const completedCount = missions.filter((mission) => mission.completed).length
+  //const completedCount = missions.filter((mission) => mission.isCompleted).length
+  const { missions, complatedMissions } = missionStore()
+  const completedCount = complatedMissions.length
   const progress = (completedCount / missions.length) * 100
 
-  const toggleMission = (id: string) => {
+  /*  const toggleMission = (id: string) => {
     setMissions(
       missions.map((mission) =>
         mission.id === id
-          ? { ...mission, completed: !mission.completed }
+          ? { ...mission, completed: !mission.isCompleted }
           : mission,
       ),
     )
   }
+  */
 
-  const getCategoryIcon = (category: Mission['category']) => {
+  /*const getCategoryIcon = (category: Mission['category']) => {
     switch (category) {
       case 'coding':
         return <Code className="h-4 w-4" />
@@ -91,7 +96,7 @@ export function DailyMissions() {
       case 'thinking':
         return 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
     }
-  }
+  }*/
 
   return (
     <div className="space-y-4">
@@ -111,16 +116,16 @@ export function DailyMissions() {
             key={mission.id}
             className={cn(
               'flex items-start space-x-3 rounded-lg border p-3 transition-colors',
-              mission.completed
+              mission.isCompleted
                 ? 'border-muted bg-muted/50'
                 : 'border-border hover:border-rose-200 hover:bg-rose-50 dark:hover:border-rose-800 dark:hover:bg-rose-950/30',
             )}
           >
             <Checkbox
-              checked={mission.completed}
-              onCheckedChange={() => toggleMission(mission.id)}
+              checked={mission.isCompleted}
+              // onCheckedChange={() => toggleMission(mission.id)}
               className={cn(
-                mission.completed
+                mission.isCompleted
                   ? 'border-rose-500 bg-rose-500 text-primary-foreground'
                   : 'border-muted-foreground',
               )}
@@ -130,7 +135,7 @@ export function DailyMissions() {
                 <p
                   className={cn(
                     'font-medium',
-                    mission.completed && 'text-muted-foreground line-through',
+                    mission.isCompleted && 'text-muted-foreground line-through',
                   )}
                 >
                   {mission.title}
@@ -139,16 +144,16 @@ export function DailyMissions() {
                   variant="outline"
                   className={cn(
                     'flex items-center gap-1',
-                    getCategoryColor(mission.category),
+                    // getCategoryColor(mission.category),
                   )}
                 >
-                  {getCategoryIcon(mission.category)}
+                  {/* {getCategoryIcon(mission.category)} */}
                   <span className="text-xs">{mission.category}</span>
                 </Badge>
               </div>
               <div className="flex items-center text-xs text-muted-foreground">
                 <Clock className="mr-1 h-3 w-3" />
-                <span>{mission.timeEstimate}분</span>
+                {/* <span>{mission.timeEstimate}분</span> */}
               </div>
             </div>
           </div>

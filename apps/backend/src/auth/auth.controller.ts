@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Post,
   Req,
   Res,
@@ -11,22 +12,11 @@ import { Request, Response } from 'express'
 import { RefreshDto, RefreshOutput } from './dto/refresh.dto'
 import { LoginDto, LoginOutput } from './dto/login.dto'
 import { CreateAccountDto, CreateAccountOutput } from './dto/create-account.dto'
+import { AuthError, AuthErrorCode } from '@tumtum/shared'
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
-  @Post('/login')
-  async login(
-    @Body() dto: LoginDto,
-    @Res({ passthrough: true }) response: Response,
-  ): Promise<LoginOutput> {
-    const { output, refreshToken } = await this.authService.login(dto)
-
-    response.cookie('refreshToken', refreshToken, { httpOnly: true })
-
-    return output
-  }
 
   @Post('/create-account')
   async createAccount(
@@ -41,7 +31,29 @@ export class AuthController {
     return output
   }
 
-  @Post('/refresh')
+  @Post('/login')
+  async login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<LoginOutput> {
+    const { output, refreshToken } = await this.authService.login(dto)
+
+    if (!output.ok) {
+      throw new BadRequestException(output.error)
+    }
+
+    response.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      maxAge: 3600 * 60 * 60 * 24 * 7,
+      path: '/',
+      sameSite: 'lax',
+      secure: false,
+    })
+
+    return output
+  }
+
+  @Get('/refresh')
   async refresh(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
@@ -49,7 +61,9 @@ export class AuthController {
     const { refreshToken } = request.cookies
 
     if (!refreshToken) {
-      throw new BadRequestException('refresh token is undefined')
+      throw new BadRequestException(
+        new AuthError(AuthErrorCode.REFRESH_TOKEN_MISSING),
+      )
     }
 
     const { output, refreshToken: newRefreshToken } =

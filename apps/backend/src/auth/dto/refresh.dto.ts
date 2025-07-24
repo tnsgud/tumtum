@@ -1,4 +1,9 @@
-import { IRefreshInput, IRefreshOutput, UserError } from '@tumtum/shared'
+import {
+  AuthError,
+  IRefreshInput,
+  IRefreshOutput,
+  UserError,
+} from '@tumtum/shared'
 import { IsString } from 'class-validator'
 
 export class RefreshDto implements IRefreshInput {
@@ -12,7 +17,7 @@ export class RefreshDto implements IRefreshInput {
 
 export class RefreshOutput implements IRefreshOutput {
   data: { accessToken: string } | undefined
-  error: UserError | undefined
+  error: AuthError | undefined
   ok: boolean
 
   constructor() {

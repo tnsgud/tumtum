@@ -3,46 +3,31 @@ import {
   PASSWORD_REGEX,
   ICreateAccountOutput,
   ICreateAccountInput,
-  UserError,
-  UserErrorCode,
-  userErrorMessages,
+  AuthError,
+  authErrorMessages,
 } from '@tumtum/shared'
 
 import { IsEmail, IsString, Matches, MinLength } from 'class-validator'
 
 export class CreateAccountDto implements ICreateAccountInput {
-  @IsString({
-    message: userErrorMessages[UserErrorCode.USERNAME_CAN_ONLY_BE_A_STRING],
-  })
-  username: string
-
-  @IsString({
-    message: userErrorMessages[UserErrorCode.NICKNAME_CAN_ONLY_BE_A_STRING],
-  })
+  @IsString()
   nickname: string
 
-  @IsString({
-    message: userErrorMessages[UserErrorCode.EMAIL_CAN_ONLY_BE_A_STRING],
-  })
-  @IsEmail(
-    {},
-    { message: userErrorMessages[UserErrorCode.EMAIL_IS_NOT_VALIDATE] },
-  )
+  @IsEmail({}, { message: authErrorMessages.NOT_INVALID_EMAIL })
   email: string
 
-  // TODO: 현재 response가 output 형식에 맞지 않기에 수정해야함 ex) filter를 써야한다고 함
-  @Matches(PASSWORD_REGEX, { message: UserErrorCode.WEAK_PASSWORD })
-  @MinLength(PASSWORD_MIN_LENGTH, { message: UserErrorCode.PASSWORD_IS_SHORT })
-  @IsString({
-    message: UserErrorCode.PASSWORD_IS_NOT_EXISTS,
+  @IsString()
+  @MinLength(PASSWORD_MIN_LENGTH, {
+    message: authErrorMessages.PASSWORD_IS_SHORT,
   })
+  @Matches(PASSWORD_REGEX, { message: authErrorMessages.WEAK_PASSWORD })
   password: string
 }
 
 export class CreateAccountOutput implements ICreateAccountOutput {
   ok: boolean
   data: undefined
-  error: UserError | undefined
+  error: AuthError | undefined
 
   constructor() {
     this.ok = false

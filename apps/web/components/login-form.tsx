@@ -10,10 +10,11 @@ import { Separator } from '@/components/ui/separator'
 import { Github, Mail } from 'lucide-react'
 import { customFetch } from '@/lib/custom-fetch'
 import { ILoginOutput } from '@tumtum/shared'
-import { redirect } from 'next/navigation'
-import { authStore } from '@/stores/access-token-store'
+import { useRouter } from 'next/navigation'
+import { authStore } from '@/stores/auth-store'
 
 export function LoginForm() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const { login } = authStore()
@@ -21,7 +22,7 @@ export function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const res = await customFetch<ILoginOutput>('/users/login', {
+    const res = await customFetch<ILoginOutput>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email: email, password: password }),
     })
@@ -32,7 +33,7 @@ export function LoginForm() {
 
     login(res.data.accessToken)
 
-    redirect('/dashboard')
+    router.push('/dashboard')
   }
 
   return (
