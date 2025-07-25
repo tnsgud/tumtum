@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { customFetch } from '@/lib/custom-fetch'
 import { authStore } from '@/stores/auth-store'
 import { missionStore } from '@/stores/mission-store'
 import { ArrowRight, Sparkles } from 'lucide-react'
@@ -25,16 +24,8 @@ export default function Home() {
     missionStore()
 
   useEffect(() => {
-    // Missions 가져오기
-    async function initMission() {
-      if (missions.length === 0) {
-        await getMissions()
-        updateComplatedMissions()
-      }
-    }
-
-    initMission()
-  }, [missions, getMissions, updateComplatedMissions])
+    getMissions()
+  }, [getMissions])
 
   return (
     <div className="container px-4 py-6 space-y-8">

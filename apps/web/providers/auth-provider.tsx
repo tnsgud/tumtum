@@ -2,7 +2,7 @@
 
 import { customFetch } from '@/lib/custom-fetch'
 import { authStore } from '@/stores/auth-store'
-import { IRefreshOutput } from '@tumtum/shared'
+import { RefreshOutput } from '@tumtum/shared'
 import { useRouter } from 'next/navigation'
 import React, { useState, useEffect } from 'react'
 
@@ -23,13 +23,13 @@ export default function AuthProvider({ children }: Props) {
       }
 
       try {
-        const res = await customFetch<IRefreshOutput>('/auth/refresh')
+        const res = await customFetch<RefreshOutput>('/auth/refresh')
 
         if (!res.ok || res.data === undefined) {
           return
         }
 
-        login(res.data.accessToken)
+        login(res.data)
         router.push('/dashboard')
       } catch (error) {
         console.log(error)

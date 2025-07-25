@@ -5,6 +5,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "db:generate": "prisma generate",
+    "db:migrate": "prisma db push",
     "db:build": "tsc -p tsconfig.json"
   },
   "devDependencies": {
