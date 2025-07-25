@@ -23,6 +23,7 @@ export function OnboardingForm() {
   const [activeTab, setActiveTab] = useState('profile')
   const [tagInput, setTagInput] = useState('')
   const [interests, setInterests] = useState<string[]>([])
+  const [job, setJob] = useState('')
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && tagInput.trim() !== '') {
@@ -67,16 +68,8 @@ export function OnboardingForm() {
 
       <TabsContent value="profile" className="space-y-4 pt-4">
         <div className="space-y-2">
-          <Label htmlFor="nickname">닉네임</Label>
-          <Input
-            id="nickname"
-            placeholder="텀텀에서 사용할 닉네임을 입력하세요"
-          />
-        </div>
-
-        <div className="space-y-2">
           <Label htmlFor="job">직업</Label>
-          <Select>
+          <Select defaultValue={job} onValueChange={(value) => setJob(value)}>
             <SelectTrigger>
               <SelectValue placeholder="직업을 선택하세요" />
             </SelectTrigger>

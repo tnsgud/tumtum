@@ -11,10 +11,16 @@
     },
     "lint": {},
     "format": {},
+    "shared:build": {
+      "cache": false
+    },
     "db:generate": {
       "cache": false
     },
     "db:build": {
+      "cache": false
+    },
+    "db:migrate": {
       "cache": false
     }
   }

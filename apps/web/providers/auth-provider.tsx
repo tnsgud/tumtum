@@ -11,12 +11,12 @@ interface Props {
 }
 
 export default function AuthProvider({ children }: Props) {
-  const router = useRouter()
   const { isLoggedIn, token, login, logout } = authStore()
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const initalizeAuth = async () => {
+      console.log(isLoggedIn, token)
       if (isLoggedIn && token) {
         setIsLoading(false)
         return
@@ -30,7 +30,6 @@ export default function AuthProvider({ children }: Props) {
         }
 
         login(res.data)
-        router.push('/dashboard')
       } catch (error) {
         console.log(error)
         logout()
@@ -40,7 +39,7 @@ export default function AuthProvider({ children }: Props) {
     }
 
     initalizeAuth()
-  }, [isLoggedIn, token, router, login, logout])
+  }, [isLoggedIn, token, login, logout])
 
   if (isLoading) {
     return (

@@ -17,4 +17,4 @@ export enum AuthErrorCode {
   NOT_MATCHED_JTI = 'NOT_MATCHED_JTI',
 }
 
-export class AuthError extends CoreError {}
+export class AuthError extends CoreError<AuthErrorCode> {}

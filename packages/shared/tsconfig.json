@@ -6,6 +6,9 @@
     "module": "CommonJS",
     "allowJs": true,
     "esModuleInterop": true,
-    "outDir": "dist"
-  }
+    "outDir": "dist",
+    "lib": ["ES2020"],
+    "baseUrl": "."
+  },
+  "include": ["../db/generated/**/*.ts"]
 }

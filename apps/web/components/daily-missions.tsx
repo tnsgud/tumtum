@@ -1,4 +1,4 @@
-'use client'
+/*'use client'
 
 import { useEffect, useState } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -6,7 +6,6 @@ import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Clock, Code, BookOpen, Coffee, Brain } from 'lucide-react'
-import { missionStore } from '@/stores/mission-store'
 
 type Mission = {
   id: string
@@ -17,7 +16,7 @@ type Mission = {
 }
 
 export function DailyMissions() {
-  /*const [missions, setMissions] = useState<Mission[]>([
+  const [missions, setMissions] = useState<Mission[]>([
     {
       id: '1',
       title: 'React 컴포넌트 리팩토링하기',
@@ -54,14 +53,11 @@ export function DailyMissions() {
       timeEstimate: 90,
     },
   ])
-    */
+  
 
-  //const completedCount = missions.filter((mission) => mission.isCompleted).length
-  const { missions, complatedMissions } = missionStore()
-  const completedCount = complatedMissions.length
-  const progress = (completedCount / missions.length) * 100
+  const completedCount = missions.filter((mission) => mission.isCompleted).length
 
-  /*  const toggleMission = (id: string) => {
+    const toggleMission = (id: string) => {
     setMissions(
       missions.map((mission) =>
         mission.id === id
@@ -70,9 +66,9 @@ export function DailyMissions() {
       ),
     )
   }
-  */
+  
 
-  /*const getCategoryIcon = (category: Mission['category']) => {
+  const getCategoryIcon = (category: Mission['category']) => {
     switch (category) {
       case 'coding':
         return <Code className="h-4 w-4" />
@@ -96,7 +92,7 @@ export function DailyMissions() {
       case 'thinking':
         return 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
     }
-  }*/
+  }
 
   return (
     <div className="space-y-4">
@@ -147,13 +143,13 @@ export function DailyMissions() {
                     // getCategoryColor(mission.category),
                   )}
                 >
-                  {/* {getCategoryIcon(mission.category)} */}
+                  {getCategoryIcon(mission.category)}
                   <span className="text-xs">{mission.category}</span>
                 </Badge>
               </div>
               <div className="flex items-center text-xs text-muted-foreground">
                 <Clock className="mr-1 h-3 w-3" />
-                {/* <span>{mission.timeEstimate}분</span> */}
+                 <span>{mission.timeEstimate}분</span>
               </div>
             </div>
           </div>
@@ -161,4 +157,8 @@ export function DailyMissions() {
       </div>
     </div>
   )
+}
+*/
+export function DailyMissions() {
+  return <div>daily missions</div>
 }

@@ -1,7 +1,8 @@
-export class CoreError extends Error {
-  code: string
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export class CoreError<T = any> extends Error {
+  code: T
 
-  constructor(code: string) {
+  constructor(code: T) {
     super()
     this.code = code
   }

@@ -1,41 +1,40 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
 import {
-  createOutput,
+  createFailedOutput,
+  createSuccessOutput,
   FindUserOutput,
   UserError,
   UserErrorCode,
 } from '@tumtum/shared'
 import { FindUserDto } from './dto/find-user.dto'
+import { User } from '@tumtum/db'
 
 @Injectable()
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getAllUser() {
-    const data = await this.prismaService.user.findMany()
+  async getAllUser(): Promise<User[]> {
+    try {
+      const data = await this.prismaService.user.findMany()
 
-    return data
+      return data
+    } catch (error) {
+      throw new InternalServerErrorException(error)
+    }
   }
 
   async findUserById({ id }: FindUserDto): Promise<FindUserOutput> {
-    const output = createOutput<FindUserOutput>()
-
     try {
       const row = await this.prismaService.user.findUnique({ where: { id } })
 
       if (!row) {
-        output.error = new UserError(UserErrorCode.ID_IS_NOT_EXISTS)
-        return output
+        return createFailedOutput(new UserError(UserErrorCode.ID_IS_NOT_EXISTS))
       }
 
-      output.ok = true
-      output.data = row
+      return createSuccessOutput(row)
     } catch (error) {
-      console.log(error)
-      output.error = error
+      throw new InternalServerErrorException(error)
     }
-
-    return output
   }
 }

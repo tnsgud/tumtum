@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { JwtService } from 'src/jwt/jwt.service'
 import { JwtPayload } from 'jsonwebtoken'
 import { PrismaService } from 'src/prisma/prisma.service'
@@ -6,13 +6,12 @@ import { LoginDto } from './dto/login.dto'
 import {
   AuthError,
   AuthErrorCode,
-  authErrorMessages,
+  CoreOutput,
   CreateAccountOutput,
-  createOutput,
-  LoginOutput,
+  createFailedOutput,
+  createSuccessOutput,
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
-  RefreshOutput,
 } from '@tumtum/shared'
 import * as bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
@@ -30,29 +29,30 @@ export class AuthService {
     password,
     nickname,
   }: CreateAccountDto): Promise<CreateAccountOutput> {
-    const output = createOutput<CreateAccountOutput>()
-
     try {
       const exists = await this.prismaService.user.findUnique({
         where: { email },
       })
 
       if (exists) {
-        output.error = new AuthError(AuthErrorCode.EMAIL_ALREADY_EXISTS)
-        return output
+        return createFailedOutput(
+          new AuthError(AuthErrorCode.EMAIL_ALREADY_EXISTS),
+        )
       }
+    } catch (error) {
+      return createFailedOutput(error)
+    }
 
-      if (password.length < PASSWORD_MIN_LENGTH) {
-        output.error = new AuthError(AuthErrorCode.PASSWORD_IS_SHORT)
-        return output
-      }
+    if (password.length < PASSWORD_MIN_LENGTH) {
+      return createFailedOutput(new AuthError(AuthErrorCode.PASSWORD_IS_SHORT))
+    }
 
-      const regexp = new RegExp(PASSWORD_REGEX)
-      if (!regexp.test(password)) {
-        output.error = new AuthError(AuthErrorCode.WEAK_PASSWORD)
-        return output
-      }
+    const regexp = new RegExp(PASSWORD_REGEX)
+    if (!regexp.test(password)) {
+      return createFailedOutput(new AuthError(AuthErrorCode.WEAK_PASSWORD))
+    }
 
+    try {
       await this.prismaService.createUserWithHashedPassword({
         data: {
           email,
@@ -61,22 +61,18 @@ export class AuthService {
         },
       })
 
-      output.ok = true
+      return createSuccessOutput(undefined)
     } catch (error) {
-      console.log(error)
+      return createFailedOutput(error)
     }
-
-    return output
   }
 
   async login({
     email,
     password,
-  }: LoginDto): Promise<{ output: LoginOutput; refreshToken: string }> {
-    const result = {
-      output: createOutput<LoginOutput>(),
-      refreshToken: '',
-    }
+  }: LoginDto): Promise<
+    CoreOutput<{ accessToken: string; refreshToken: string }, AuthError>
+  > {
     try {
       const user = await this.prismaService.user.findUnique({
         select: { id: true, password: true, nickname: true },
@@ -84,36 +80,36 @@ export class AuthService {
       })
 
       if (!user) {
-        result.output.error = new AuthError(AuthErrorCode.NOT_REGISTERED_EMAIL)
-        return result
+        return createFailedOutput(
+          new AuthError(AuthErrorCode.NOT_REGISTERED_EMAIL),
+        )
       }
 
       const ok = await bcrypt.compare(password, user.password)
       if (!ok) {
-        result.output.error = new AuthError(AuthErrorCode.NOT_MATCHED_PASSWORD)
-        return result
+        return createFailedOutput(
+          new AuthError(AuthErrorCode.NOT_MATCHED_PASSWORD),
+        )
       }
 
       const accessToken = this.getAccessToken(user.id, user.nickname)
-      result.refreshToken = await this.getRefreshToken(user.id)
+      const refreshToken = await this.getRefreshToken(user.id)
 
-      result.output.ok = true
-      result.output.data = accessToken
+      const output = createSuccessOutput({ accessToken, refreshToken })
+
+      console.log(output)
+      return output
     } catch (error) {
       console.log(error)
+      throw new InternalServerErrorException(error)
     }
-
-    return result
   }
 
   async refresh(
     oldRefreshToken: string,
-  ): Promise<{ output: RefreshOutput; refreshToken: string }> {
-    const result = {
-      output: createOutput<RefreshOutput>(),
-      refreshToken: '',
-    }
-
+  ): Promise<
+    CoreOutput<{ accessToken: string; refreshToken: string }, AuthError>
+  > {
     try {
       const payload = this.jwtService.verify(oldRefreshToken) as JwtPayload
 
@@ -122,28 +118,23 @@ export class AuthService {
       })
 
       if (!user) {
-        result.output.error = new AuthError(
-          authErrorMessages.NOT_REGISTERED_EMAIL,
+        return createFailedOutput(
+          new AuthError(AuthErrorCode.NOT_REGISTERED_EMAIL),
         )
-        return result
       }
 
       if (user.jti !== payload.jti) {
-        result.output.error = new AuthError(authErrorMessages.NOT_MATCHED_JTI)
-        return result
+        return createFailedOutput(new AuthError(AuthErrorCode.NOT_MATCHED_JTI))
       }
 
       const accessToken = this.getAccessToken(user.id, user.nickname)
+      const refreshToken = await this.getRefreshToken(user.id)
 
-      result.output.ok = true
-      result.output.data = accessToken
-
-      result.refreshToken = await this.getRefreshToken(user.id)
+      return createSuccessOutput({ accessToken, refreshToken })
     } catch (error) {
       console.log(error)
+      throw new InternalServerErrorException(error)
     }
-
-    return result
   }
 
   getAccessToken(userId: string, nickname: string): string {

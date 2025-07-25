@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Github, Mail } from 'lucide-react'
 import { customFetch } from '@/lib/custom-fetch'
-import { LoginOutput } from '@tumtum/shared'
+import { authErrorMessages, LoginOutput } from '@tumtum/shared'
 import { useRouter } from 'next/navigation'
 import { authStore } from '@/stores/auth-store'
 
@@ -22,16 +22,16 @@ export function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const res = await customFetch<LoginOutput>('/auth/login', {
+    const loginResponse = await customFetch<LoginOutput>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email: email, password: password }),
     })
 
-    if (!res.ok || res.data === undefined) {
-      return alert('login 실패')
+    if (!loginResponse.ok) {
+      return alert(authErrorMessages[loginResponse.error.code])
     }
 
-    login(res.data)
+    login(loginResponse.data)
 
     router.push('/dashboard')
   }

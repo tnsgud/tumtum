@@ -246,7 +246,7 @@ importers:
   packages/shared:
     dependencies:
       '@tumtum/db':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../db
 
 packages:

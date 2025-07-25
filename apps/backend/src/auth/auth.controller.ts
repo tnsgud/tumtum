@@ -41,13 +41,13 @@ export class AuthController {
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<LoginOutput> {
-    const { output, refreshToken } = await this.authService.login(dto)
+    const output = await this.authService.login(dto)
 
     if (!output.ok) {
       throw new BadRequestException(output.error)
     }
 
-    response.cookie('refreshToken', refreshToken, {
+    response.cookie('refreshToken', output.data.refreshToken, {
       httpOnly: true,
       maxAge: 3600 * 60 * 60 * 24 * 7,
       path: '/',
@@ -55,7 +55,11 @@ export class AuthController {
       secure: false,
     })
 
-    return output
+    return {
+      ok: output.ok,
+      data: output.data.accessToken,
+      error: output.error,
+    }
   }
 
   @Get('/refresh')
@@ -71,11 +75,24 @@ export class AuthController {
       )
     }
 
-    const { output, refreshToken: newRefreshToken } =
-      await this.authService.refresh(refreshToken)
+    const output = await this.authService.refresh(refreshToken)
 
-    response.cookie('refreshToken', newRefreshToken, { httpOnly: true })
+    if (!output.ok) {
+      throw new BadRequestException()
+    }
 
-    return output
+    response.cookie('refreshToken', output.data.refreshToken, {
+      httpOnly: true,
+      maxAge: 3600 * 60 * 60 * 24 * 7,
+      path: '/',
+      sameSite: 'lax',
+      secure: false,
+    })
+
+    return {
+      ok: output.ok,
+      data: output.data.accessToken,
+      error: output.error,
+    }
   }
 }
