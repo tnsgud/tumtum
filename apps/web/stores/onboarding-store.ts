@@ -25,11 +25,17 @@ interface OnboardingStore {
   setExperience: (v: string) => void
   interests: string[]
   setInterests: (v: string[]) => void
+  shortTermGoal: string
+  setShortTermGoal: (v: string) => void
+  longTermGoal: string
+  setLongTermGoal: (v: string) => void
+  requiredForGoal: string[]
+  setRequiredForGoal: (v: string[]) => void
   //step1: Step1
-  step2: Step2
+  // step2: Step2
   step3: Step3
   //setStep1: (data: Partial<Step1>) => void
-  setStep2: (data: Step2) => void
+  // setStep2: (data: Step2) => void
   setStep3: (data: Step3) => void
 }
 
@@ -40,17 +46,23 @@ export const onboardingStore = create<OnboardingStore>((set) => ({
   setExperience: (experience) => set({ experience }),
   interests: [],
   setInterests: (interests) => set({ interests }),
+  shortTermGoal: '',
+  setShortTermGoal: (shortTermGoal) => set({ shortTermGoal }),
+  longTermGoal: '',
+  setLongTermGoal: (longTermGoal) => set({ longTermGoal }),
+  requiredForGoal: [],
+  setRequiredForGoal: (requiredForGoal) => set({ requiredForGoal }),
   /*step1: {
     job: '',
     experience: '',
     interests: [],
   },
-  */
   step2: {
     shortTermGoal: '',
     longTermGoal: '',
     requiredForGoal: [],
   },
+  */
   step3: {
     routines: [],
   },
@@ -65,7 +77,7 @@ export const onboardingStore = create<OnboardingStore>((set) => ({
       },
     }))
   },
-  */
   setStep2: (data) => set({ step2: data }),
+  */
   setStep3: (data) => set({ step3: data }),
 }))

@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ProfileTab } from './profile-tab'
+import { GoalsTab } from './goals-tab'
 
 export function OnboardingForm() {
   const [activeTab, setActiveTab] = useState('profile')
@@ -40,100 +41,12 @@ export function OnboardingForm() {
         <TabsTrigger value="routines">루틴</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="profile" className="space-y-4 pt-4">
+      <TabsContent value="profile">
         <ProfileTab handleNextTab={handleNextTab} />
       </TabsContent>
 
-      <TabsContent value="goals" className="space-y-4 pt-4">
-        <div className="space-y-2">
-          <Label htmlFor="shortTermGoal">단기 목표 (3개월)</Label>
-          <Textarea
-            id="shortTermGoal"
-            placeholder="3개월 내에 달성하고 싶은 목표를 작성해주세요."
-            className="min-h-[100px]"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="longTermGoal">장기 목표 (1년)</Label>
-          <Textarea
-            id="longTermGoal"
-            placeholder="1년 내에 달성하고 싶은 목표를 작성해주세요."
-            className="min-h-[100px]"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label>목표 달성을 위해 필요한 것</Label>
-          <div className="grid grid-cols-2 gap-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox id="skill" />
-              <label
-                htmlFor="skill"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                기술 습득
-              </label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="project" />
-              <label
-                htmlFor="project"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                프로젝트 경험
-              </label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="network" />
-              <label
-                htmlFor="network"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                네트워킹
-              </label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="mentoring" />
-              <label
-                htmlFor="mentoring"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                멘토링
-              </label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="study" />
-              <label
-                htmlFor="study"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                스터디
-              </label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="certificate" />
-              <label
-                htmlFor="certificate"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                자격증
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-between">
-          <Button onClick={handlePrevTab} variant="outline">
-            이전
-          </Button>
-          <Button
-            onClick={handleNextTab}
-            className="bg-rose-500 hover:bg-rose-600 text-white"
-          >
-            다음
-          </Button>
-        </div>
+      <TabsContent value="goals">
+        <GoalsTab onPrev={handlePrevTab} onNext={handleNextTab} />
       </TabsContent>
 
       <TabsContent value="routines" className="space-y-4 pt-4">

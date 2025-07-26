@@ -14,19 +14,17 @@ import { Input } from './ui/input'
 import { onboardingStore } from '@/stores/onboarding-store'
 import { Label } from './ui/label'
 
-type ProfileFormItem = {
-  name: 'job' | 'experience' | 'interest'
+type SelectInput = {
+  name: 'job' | 'experience'
   label: string
   placeholder: string
-  inputType: 'select' | 'input'
-  selectItem?: { [key in string]: string }
+  selectItem: { [key in string]: string }
 }
-const profileFormItems: ProfileFormItem[] = [
+const selectInput: SelectInput[] = [
   {
     name: 'job',
     label: '직업',
     placeholder: '직업을 선택하세요',
-    inputType: 'select',
     selectItem: {
       frontend: '프론트엔드 개발자',
       backend: '백엔드 개발자',
@@ -43,7 +41,6 @@ const profileFormItems: ProfileFormItem[] = [
     name: 'experience',
     label: '경력',
     placeholder: '경력을 선택하세요',
-    inputType: 'select',
     selectItem: {
       '0': '신입',
       '1': '1년 미만',
@@ -51,13 +48,6 @@ const profileFormItems: ProfileFormItem[] = [
       '3-5': '3-5년',
       '5+': '5년 이상',
     },
-  },
-  {
-    name: 'interest',
-    label: '관심 분야',
-    placeholder:
-      '관심 분야를 입력하고 Space를 누르세요 (예: React, TypeScript)',
-    inputType: 'input',
   },
 ]
 
@@ -90,63 +80,63 @@ export function ProfileTab({ handleNextTab }: Props) {
   }
 
   return (
-    <div>
-      {profileFormItems.map(
-        ({ name, label, placeholder, inputType, selectItem }) => (
-          <div key={`profile-item-${name}`}>
-            <Label>{label}</Label>
-            {name === 'interest' && (
-              <div className="flex flex-wrap gap-2 mb-2">
-                {interests.map((interest) => (
-                  <Badge
-                    key={interest}
-                    className="bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300"
+    <div className="flex flex-col space-y-4 pt-4">
+      {selectInput.map(({ name, label, placeholder, selectItem }) => (
+        <div key={`profile-item-${name}`} className="flex flex-col space-y-2">
+          <Label>{label}</Label>
+          <Select
+            defaultValue={name === 'experience' ? experience : job}
+            onValueChange={(v) => {
+              console.log(v, regexp.test(v))
+              regexp.test(v) ? setExperience(v) : setJob(v)
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={placeholder} />
+            </SelectTrigger>
+            <SelectContent>
+              {Array.from(
+                Object.entries(selectItem).map(([key, value]) => (
+                  <SelectItem
+                    key={`profile-form-item-${name}-${key}`}
+                    value={key}
                   >
-                    {interest}
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-4 w-4 ml-1 p-0"
-                      onClick={() => handleRemoveTag(interest)}
-                    >
-                      <X className="h-3 w-3" />
-                      <span className="sr-only">태그 삭제</span>
-                    </Button>
-                  </Badge>
-                ))}
-              </div>
-            )}
-            {inputType === 'select' && typeof selectItem === 'object' ? (
-              <Select
-                defaultValue={name === 'experience' ? experience : job}
-                onValueChange={(v) => {
-                  console.log(v, regexp.test(v))
-                  regexp.test(v) ? setExperience(v) : setJob(v)
-                }}
+                    {value}
+                  </SelectItem>
+                )),
+              )}
+            </SelectContent>
+          </Select>
+        </div>
+      ))}
+
+      <div>
+        <Label>관심 분야</Label>
+        <div className="flex flex-wrap gap-2 my-1">
+          {interests.map((interest) => (
+            <Badge
+              key={interest}
+              className="bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300"
+            >
+              {interest}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-4 w-4 ml-1 p-0"
+                onClick={() => handleRemoveTag(interest)}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder={placeholder} />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.from(
-                    Object.entries(selectItem).map(([key, value]) => (
-                      <SelectItem
-                        key={`profile-form-item-${name}-${key}`}
-                        value={key}
-                      >
-                        {value}
-                      </SelectItem>
-                    )),
-                  )}
-                </SelectContent>
-              </Select>
-            ) : (
-              <Input placeholder={placeholder} onKeyDown={handleAddTag} />
-            )}
-          </div>
-        ),
-      )}
+                <X className="h-3 w-3" />
+                <span className="sr-only">태그 삭제</span>
+              </Button>
+            </Badge>
+          ))}
+        </div>
+        <Input
+          placeholder="관심 분야를 입력하고 Enter를 누르세요 (예: React, TypeScript)"
+          onKeyDown={handleAddTag}
+        />
+      </div>
 
       <div className="flex justify-end">
         <Button
