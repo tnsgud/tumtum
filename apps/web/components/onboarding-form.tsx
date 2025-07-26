@@ -4,40 +4,14 @@ import type React from 'react'
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
-import { X } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
+import { ProfileTab } from './profile-tab'
 
 export function OnboardingForm() {
   const [activeTab, setActiveTab] = useState('profile')
-  const [tagInput, setTagInput] = useState('')
-  const [interests, setInterests] = useState<string[]>([])
-  const [job, setJob] = useState('')
-
-  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && tagInput.trim() !== '') {
-      e.preventDefault()
-      if (!interests.includes(tagInput.trim())) {
-        setInterests([...interests, tagInput.trim()])
-      }
-      setTagInput('')
-    }
-  }
-
-  const handleRemoveTag = (tagToRemove: string) => {
-    setInterests(interests.filter((tag) => tag !== tagToRemove))
-  }
 
   const handleNextTab = () => {
     if (activeTab === 'profile') {
@@ -67,80 +41,7 @@ export function OnboardingForm() {
       </TabsList>
 
       <TabsContent value="profile" className="space-y-4 pt-4">
-        <div className="space-y-2">
-          <Label htmlFor="job">직업</Label>
-          <Select defaultValue={job} onValueChange={(value) => setJob(value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="직업을 선택하세요" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="frontend">프론트엔드 개발자</SelectItem>
-              <SelectItem value="backend">백엔드 개발자</SelectItem>
-              <SelectItem value="fullstack">풀스택 개발자</SelectItem>
-              <SelectItem value="mobile">모바일 개발자</SelectItem>
-              <SelectItem value="devops">DevOps 엔지니어</SelectItem>
-              <SelectItem value="designer">디자이너</SelectItem>
-              <SelectItem value="pm">프로덕트 매니저</SelectItem>
-              <SelectItem value="student">학생</SelectItem>
-              <SelectItem value="other">기타</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="experience">경력</Label>
-          <Select>
-            <SelectTrigger>
-              <SelectValue placeholder="경력을 선택하세요" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="0">신입</SelectItem>
-              <SelectItem value="1">1년 미만</SelectItem>
-              <SelectItem value="1-3">1-3년</SelectItem>
-              <SelectItem value="3-5">3-5년</SelectItem>
-              <SelectItem value="5+">5년 이상</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label>관심 분야</Label>
-          <div className="flex flex-wrap gap-2 mb-2">
-            {interests.map((interest) => (
-              <Badge
-                key={interest}
-                className="bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300"
-              >
-                {interest}
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-4 w-4 ml-1 p-0"
-                  onClick={() => handleRemoveTag(interest)}
-                >
-                  <X className="h-3 w-3" />
-                  <span className="sr-only">태그 삭제</span>
-                </Button>
-              </Badge>
-            ))}
-          </div>
-          <Input
-            placeholder="관심 분야를 입력하고 Enter를 누르세요 (예: React, TypeScript)"
-            value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-            onKeyDown={handleAddTag}
-          />
-        </div>
-
-        <div className="flex justify-end">
-          <Button
-            onClick={handleNextTab}
-            className="bg-rose-500 hover:bg-rose-600 text-white"
-          >
-            다음
-          </Button>
-        </div>
+        <ProfileTab handleNextTab={handleNextTab} />
       </TabsContent>
 
       <TabsContent value="goals" className="space-y-4 pt-4">
