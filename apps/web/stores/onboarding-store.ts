@@ -18,28 +18,37 @@ export interface Step3 {
   routines: string[]
 }
 
+interface Routine {
+  id: string
+  name: string
+  dateOfTheWeek: string[]
+  isEdit: boolean
+}
+
 interface OnboardingStore {
+  // Step 1
   job: string
   setJob: (v: string) => void
   experience: string
   setExperience: (v: string) => void
   interests: string[]
   setInterests: (v: string[]) => void
+  // Step 2
   shortTermGoal: string
   setShortTermGoal: (v: string) => void
   longTermGoal: string
   setLongTermGoal: (v: string) => void
   requiredForGoal: string[]
   setRequiredForGoal: (v: string[]) => void
-  //step1: Step1
-  // step2: Step2
-  step3: Step3
-  //setStep1: (data: Partial<Step1>) => void
-  // setStep2: (data: Step2) => void
-  setStep3: (data: Step3) => void
+  // Step 3
+  routines: Routine[]
+  addEmptyRoutine: () => void
+  setRoutine: (v: Routine) => void
+  removeRoutine: (id: string) => void
+  findRoutine: (id: string) => { index: number; routine: Routine }
 }
 
-export const onboardingStore = create<OnboardingStore>((set) => ({
+export const onboardingStore = create<OnboardingStore>((set, get) => ({
   job: '',
   setJob: (job) => set({ job }),
   experience: '',
@@ -52,32 +61,57 @@ export const onboardingStore = create<OnboardingStore>((set) => ({
   setLongTermGoal: (longTermGoal) => set({ longTermGoal }),
   requiredForGoal: [],
   setRequiredForGoal: (requiredForGoal) => set({ requiredForGoal }),
-  /*step1: {
-    job: '',
-    experience: '',
-    interests: [],
-  },
-  step2: {
-    shortTermGoal: '',
-    longTermGoal: '',
-    requiredForGoal: [],
-  },
-  */
-  step3: {
-    routines: [],
-  },
-  /*setStep1: (data) => {
-    console.log(data)
+  routines: [
+    {
+      id: 'routine-0',
+      name: '아침 코딩 1시간',
+      dateOfTheWeek: [],
+      isEdit: false,
+    },
+  ],
+  addEmptyRoutine: () =>
+    set((state) => ({
+      routines: [
+        ...state.routines,
+        {
+          id: `routine-${state.routines.length}`,
+          name: '',
+          dateOfTheWeek: [],
+          isEdit: true,
+        },
+      ],
+    })),
+  setRoutine: (routine) => {
+    const { routines } = get()
+    const index = routines.findIndex((r) => r.id === routine.id)
 
-    set(({ step1 }) => ({
-      step1: {
-        job: data.job ?? step1.job,
-        experience: data.experience ?? step1.experience,
-        interests: data.interests ?? step1.interests,
-      },
-    }))
+    set({
+      routines: [
+        ...routines.slice(0, index),
+        routine,
+        ...routines.slice(index + 1, routines.length),
+      ],
+    })
   },
-  setStep2: (data) => set({ step2: data }),
-  */
-  setStep3: (data) => set({ step3: data }),
+  removeRoutine: (id) => {
+    const { routines } = get()
+    set({
+      routines: [
+        ...routines
+          .filter((r) => r.id !== id)
+          .map((r, i) => {
+            r.id = `routine-${i}`
+            return r
+          }),
+      ],
+    })
+  },
+  findRoutine: (id) => {
+    const index = get().routines.findIndex((r) => r.id === id)
+
+    return {
+      index,
+      routine: get().routines[index],
+    }
+  },
 }))

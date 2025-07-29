@@ -91,7 +91,6 @@ export function GoalsTab({ onPrev, onNext }: Props) {
 
       <div className="space-y-2">
         <Label>목표 달성을 위해 필요한 것</Label>
-        {requiredForGoal.join(', ')}
         <div className="grid grid-cols-2 gap-2">
           {checkboxs.map(({ id, label }) => (
             <div
