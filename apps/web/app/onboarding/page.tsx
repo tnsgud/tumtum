@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { OnboardingForm } from '@/components/onboarding-form'
+import { OnboardingForm } from '@/components/onboarding/onboarding-form'
 
 export default function OnboardingPage() {
   return (

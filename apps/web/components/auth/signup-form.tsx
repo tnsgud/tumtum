@@ -24,7 +24,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './ui/form'
+} from '../ui/form'
 
 import { customFetch } from '@/lib/custom-fetch'
 import { useRouter } from 'next/navigation'

@@ -3,7 +3,6 @@
 import { customFetch } from '@/lib/custom-fetch'
 import { authStore } from '@/stores/auth-store'
 import { RefreshOutput } from '@tumtum/shared'
-import { useRouter } from 'next/navigation'
 import React, { useState, useEffect } from 'react'
 
 interface Props {

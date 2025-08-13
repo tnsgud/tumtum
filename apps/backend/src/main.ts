@@ -10,7 +10,8 @@ async function bootstrap() {
     origin: 'http://macbookpro.tail2e04c4.ts.net:3000',
     credentials: true,
     methods: 'GET,HEAD,PUT.PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type, Accept, Authorization',
+    allowedHeaders:
+      'Content-Type,Accept,Authorization,Access-Control-Allow-Origin',
   })
 
   app.useGlobalPipes(

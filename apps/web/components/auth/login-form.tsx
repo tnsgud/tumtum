@@ -28,7 +28,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './ui/form'
+} from '../ui/form'
 
 const loginFormSchema = z.object({
   email: z

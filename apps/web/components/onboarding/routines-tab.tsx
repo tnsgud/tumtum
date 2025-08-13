@@ -1,21 +1,23 @@
 import { cn } from '@/lib/utils'
-import { Button } from './ui/button'
-import { Label } from './ui/label'
-import { ToggleGroup, ToggleGroupItem } from './ui/toggle-group'
+import { Button } from '../ui/button'
+import { Label } from '../ui/label'
+import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group'
 import { onboardingStore } from '@/stores/onboarding-store'
 import { Check, Pencil, Plus, Trash } from 'lucide-react'
-import { Input } from './ui/input'
+import { Input } from '../ui/input'
 import { ChangeEvent } from 'react'
-
-interface Props {
-  onPrev: () => void
-}
 
 const DATE_OF_THE_WEEK = ['일', '월', '화', '수', '목', '금', '토']
 
-export function RoutinesTab({ onPrev }: Props) {
-  const { routines, addEmptyRoutine, removeRoutine, setRoutine, findRoutine } =
-    onboardingStore()
+export function RoutinesTab() {
+  const {
+    routines,
+    addEmptyRoutine,
+    removeRoutine,
+    setRoutine,
+    findRoutine,
+    onPrevTab,
+  } = onboardingStore()
 
   const handleChangeName = (e: ChangeEvent<HTMLInputElement>, id: string) => {
     const { routine } = findRoutine(id)
@@ -109,7 +111,7 @@ export function RoutinesTab({ onPrev }: Props) {
       </div>
 
       <div className="flex justify-between">
-        <Button onClick={onPrev} variant="outline">
+        <Button onClick={onPrevTab} variant="outline">
           이전
         </Button>
         <Button

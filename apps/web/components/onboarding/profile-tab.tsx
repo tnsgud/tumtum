@@ -6,13 +6,14 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from './ui/select'
-import { Badge } from './ui/badge'
+} from '../ui/select'
+import { Badge } from '../ui/badge'
 import { X } from 'lucide-react'
-import { Button } from './ui/button'
-import { Input } from './ui/input'
+import { Button } from '../ui/button'
+import { Input } from '../ui/input'
 import { onboardingStore } from '@/stores/onboarding-store'
-import { Label } from './ui/label'
+import { Label } from '../ui/label'
+import { LaterButton } from './later-button'
 
 type SelectInput = {
   name: 'job' | 'experience'
@@ -51,14 +52,17 @@ const selectInput: SelectInput[] = [
   },
 ]
 
-interface Props {
-  handleNextTab: () => void
-}
-
-export function ProfileTab({ handleNextTab }: Props) {
+export function ProfileTab() {
   const regexp = new RegExp(/^.*[0-9].*$/)
-  const { job, experience, interests, setJob, setExperience, setInterests } =
-    onboardingStore()
+  const {
+    job,
+    experience,
+    interests,
+    setJob,
+    setExperience,
+    setInterests,
+    onNextTab,
+  } = onboardingStore()
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== 'Enter') return
@@ -138,9 +142,10 @@ export function ProfileTab({ handleNextTab }: Props) {
         />
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-between">
+        <LaterButton />
         <Button
-          onClick={handleNextTab}
+          onClick={onNextTab}
           className="bg-rose-500 hover:bg-rose-600 text-white"
         >
           다음

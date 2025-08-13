@@ -2,21 +2,7 @@
 
 import { create } from 'zustand'
 
-export interface Step1 {
-  job: string
-  experience: string
-  interests: string[]
-}
-
-export interface Step2 {
-  shortTermGoal: string
-  longTermGoal: string
-  requiredForGoal: string[]
-}
-
-export interface Step3 {
-  routines: string[]
-}
+export type OnboardingTab = 'profile' | 'goals' | 'routines'
 
 interface Routine {
   id: string
@@ -26,41 +12,75 @@ interface Routine {
 }
 
 interface OnboardingStore {
-  // Step 1
+  activeTab: OnboardingTab
+  setActiveTab: (v: OnboardingTab) => void
+  onNextTab: () => void
+  onPrevTab: () => void
+  // Profile Tab
   job: string
   setJob: (v: string) => void
   experience: string
   setExperience: (v: string) => void
   interests: string[]
   setInterests: (v: string[]) => void
-  // Step 2
+  // profileValidate: () => boolean
+  // Goals Tab
   shortTermGoal: string
   setShortTermGoal: (v: string) => void
   longTermGoal: string
   setLongTermGoal: (v: string) => void
   requiredForGoal: string[]
   setRequiredForGoal: (v: string[]) => void
-  // Step 3
+  // GoalsValidate: () => boolean
+  // Routines Tab
   routines: Routine[]
   addEmptyRoutine: () => void
   setRoutine: (v: Routine) => void
   removeRoutine: (id: string) => void
   findRoutine: (id: string) => { index: number; routine: Routine }
+  // routinesValidate: () => boolean
 }
 
 export const onboardingStore = create<OnboardingStore>((set, get) => ({
+  activeTab: 'profile',
+  setActiveTab: (activeTab) => set({ activeTab }),
+  onNextTab: () => {
+    // const { activeTab, profileValidate, goalsValidate } = get()
+    const { activeTab } = get()
+
+    if (activeTab === 'profile') {
+      // const result = profileValidate()
+      // if (!result) return
+
+      return set({ activeTab: 'goals' })
+    }
+
+    if (activeTab === 'goals') {
+      return set({ activeTab: 'routines' })
+    }
+  },
+  onPrevTab: () => {
+    const { activeTab } = get()
+    if (activeTab === 'goals') {
+      set({ activeTab: 'profile' })
+    } else if (activeTab === 'routines') {
+      set({ activeTab: 'goals' })
+    }
+  },
   job: '',
   setJob: (job) => set({ job }),
   experience: '',
   setExperience: (experience) => set({ experience }),
   interests: [],
   setInterests: (interests) => set({ interests }),
+  // profileValidate: () => true,
   shortTermGoal: '',
   setShortTermGoal: (shortTermGoal) => set({ shortTermGoal }),
   longTermGoal: '',
   setLongTermGoal: (longTermGoal) => set({ longTermGoal }),
   requiredForGoal: [],
   setRequiredForGoal: (requiredForGoal) => set({ requiredForGoal }),
+  // goalsValidate: () => true,
   routines: [
     {
       id: 'routine-0',
@@ -114,4 +134,5 @@ export const onboardingStore = create<OnboardingStore>((set, get) => ({
       routine: get().routines[index],
     }
   },
+  // routinesValidate: () => true,
 }))

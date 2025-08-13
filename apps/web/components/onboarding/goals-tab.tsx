@@ -1,17 +1,12 @@
 'use client'
 
 import { ChangeEvent, FormEvent } from 'react'
-import { Button } from './ui/button'
-import { Checkbox } from './ui/checkbox'
-import { Label } from './ui/label'
-import { Textarea } from './ui/textarea'
+import { Button } from '../ui/button'
+import { Checkbox } from '../ui/checkbox'
+import { Label } from '../ui/label'
+import { Textarea } from '../ui/textarea'
 import { onboardingStore } from '@/stores/onboarding-store'
 import { CheckedState } from '@radix-ui/react-checkbox'
-
-interface Props {
-  onPrev: () => void
-  onNext: () => void
-}
 
 interface Item {
   id: 'shortTermGoal' | 'longTermGoal'
@@ -46,7 +41,7 @@ const checkboxs: CheckBoxItem[] = [
   { id: 'certificate', label: '자격증' },
 ]
 
-export function GoalsTab({ onPrev, onNext }: Props) {
+export function GoalsTab() {
   const {
     shortTermGoal,
     longTermGoal,
@@ -54,6 +49,8 @@ export function GoalsTab({ onPrev, onNext }: Props) {
     setShortTermGoal,
     setLongTermGoal,
     setRequiredForGoal,
+    onNextTab,
+    onPrevTab,
   } = onboardingStore()
 
   const handleOnChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -112,11 +109,11 @@ export function GoalsTab({ onPrev, onNext }: Props) {
         </div>
       </div>
       <div className="flex justify-between">
-        <Button onClick={onPrev} variant="outline">
+        <Button onClick={onPrevTab} variant="outline">
           이전
         </Button>
         <Button
-          onClick={onNext}
+          onClick={onNextTab}
           className="bg-rose-500 hover:bg-rose-600 text-white"
         >
           다음

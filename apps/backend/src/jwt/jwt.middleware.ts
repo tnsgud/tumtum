@@ -1,4 +1,8 @@
-import { Injectable, NestMiddleware } from '@nestjs/common'
+import {
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { JwtService } from './jwt.service'
 import { Request, Response, NextFunction } from 'express'
 import { UserService } from 'src/user/user.service'
@@ -25,8 +29,7 @@ export class JwtMiddleware implements NestMiddleware {
         })
 
         if (!ok) {
-          console.log(error)
-          return next()
+          throw new UnauthorizedException()
         }
 
         // biome-ignore lint/complexity/useLiteralKeys: <explanation>

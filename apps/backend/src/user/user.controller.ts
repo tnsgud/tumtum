@@ -1,11 +1,7 @@
-import { Controller, Delete, Get, Patch, Req } from '@nestjs/common'
+import { Controller, Delete, Get, Patch, Put, Req } from '@nestjs/common'
 import { UserService } from './user.service'
 import { Request } from 'express'
-import { User } from '@tumtum/db'
-
-interface CustomRequest extends Request {
-  user: User
-}
+import { CustomRequest } from 'src/request'
 
 @Controller('users')
 export class UserController {
@@ -37,5 +33,14 @@ export class UserController {
       data: user.is_onboarding_completed,
       error: undefined,
     }
+  }
+
+  @Get('/completed-onboarding')
+  async changeToOnboardingComplte(@Req() request: CustomRequest) {
+    const { user } = request
+
+    console.log(user)
+
+    return this.userService.changeToOnboardingComplete(user.id)
   }
 }
