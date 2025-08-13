@@ -12,32 +12,19 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { customFetch } from '@/lib/custom-fetch'
 import { authStore } from '@/stores/auth-store'
-import { CoreOutput, UserError } from '@tumtum/shared'
+import { missionsStore } from '@/stores/missions-store'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 export default function Home() {
-  const router = useRouter()
+  const { getMissions } = missionsStore()
   const { nickname } = authStore()
 
   useEffect(() => {
-    async function init() {
-      const { data } =
-        await customFetch<
-          CoreOutput<{ ok: true; data: boolean; error: undefined }, UserError>
-        >('/users/me')
-
-      if (!data) {
-        router.push('/onboarding')
-      }
-    }
-
-    init()
-  }, [router])
+    getMissions()
+  }, [getMissions])
 
   return (
     <div className="container px-4 py-6 space-y-8">

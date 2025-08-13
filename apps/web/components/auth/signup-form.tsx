@@ -10,8 +10,6 @@ import {
   CreateAccountOutput,
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
-  UserErrorCode,
-  userErrorMessages,
 } from '@tumtum/shared'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -26,7 +24,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './ui/form'
+} from '../ui/form'
 
 import { customFetch } from '@/lib/custom-fetch'
 import { useRouter } from 'next/navigation'
@@ -121,7 +119,7 @@ export function SignupForm() {
     )
 
     if (!ok && typeof error !== 'undefined') {
-      return alert(userErrorMessages[error.code as UserErrorCode])
+      return alert(authErrorMessages[error.code])
     }
 
     router.push('/login')

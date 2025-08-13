@@ -1,6 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
 import {
+  CompletedOnboardingOutput,
   createFailedOutput,
   createSuccessOutput,
   FindUserOutput,
@@ -33,6 +34,21 @@ export class UserService {
       }
 
       return createSuccessOutput(row)
+    } catch (error) {
+      throw new InternalServerErrorException(error)
+    }
+  }
+
+  async changeToOnboardingComplete(
+    id: string,
+  ): Promise<CompletedOnboardingOutput> {
+    try {
+      const result = await this.prismaService.user.update({
+        data: { is_onboarding_completed: true },
+        where: { id },
+      })
+      console.log(result)
+      return createSuccessOutput(undefined)
     } catch (error) {
       throw new InternalServerErrorException(error)
     }
