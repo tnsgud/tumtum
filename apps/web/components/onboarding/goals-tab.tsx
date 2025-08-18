@@ -7,6 +7,7 @@ import { Label } from '../ui/label'
 import { Textarea } from '../ui/textarea'
 import { onboardingStore } from '@/stores/onboarding-store'
 import { CheckedState } from '@radix-ui/react-checkbox'
+import { LaterButton } from './later-button'
 
 interface Item {
   id: 'shortTermGoal' | 'longTermGoal'
@@ -109,15 +110,19 @@ export function GoalsTab() {
         </div>
       </div>
       <div className="flex justify-between">
-        <Button onClick={onPrevTab} variant="outline">
-          이전
-        </Button>
-        <Button
-          onClick={onNextTab}
-          className="bg-rose-500 hover:bg-rose-600 text-white"
-        >
-          다음
-        </Button>
+        <LaterButton />
+
+        <div className="flex flex-row gap-3">
+          <Button onClick={onPrevTab} variant="outline">
+            이전
+          </Button>
+          <Button
+            onClick={onNextTab}
+            className="bg-rose-500 hover:bg-rose-600 text-white"
+          >
+            다음
+          </Button>
+        </div>
       </div>
     </div>
   )
