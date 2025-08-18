@@ -6,6 +6,7 @@ import { onboardingStore } from '@/stores/onboarding-store'
 import { Check, Pencil, Plus, Trash } from 'lucide-react'
 import { Input } from '../ui/input'
 import { ChangeEvent } from 'react'
+import { LaterButton } from './later-button'
 
 const DATE_OF_THE_WEEK = ['일', '월', '화', '수', '목', '금', '토']
 
@@ -111,15 +112,18 @@ export function RoutinesTab() {
       </div>
 
       <div className="flex justify-between">
-        <Button onClick={onPrevTab} variant="outline">
-          이전
-        </Button>
-        <Button
-          className="bg-rose-500 hover:bg-rose-600 text-white"
-          onClick={() => console.log(routines)}
-        >
-          완료
-        </Button>
+        <LaterButton />
+        <div className="flex flex-row gap-3">
+          <Button onClick={onPrevTab} variant="outline">
+            이전
+          </Button>
+          <Button
+            className="bg-rose-500 hover:bg-rose-600 text-white"
+            onClick={() => console.log(routines)}
+          >
+            완료
+          </Button>
+        </div>
       </div>
     </div>
   )
