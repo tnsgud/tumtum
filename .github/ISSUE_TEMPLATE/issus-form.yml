@@ -27,14 +27,3 @@ body:
       description: '이슈에 대해서 간략히 설명해주세요'
     validations:
       required: true
-
-  - type: textarea
-    id: tasks
-    attributes:
-      label: '✅ 체크리스트(Tasks)'
-      description: '해당 이슈에 대해 필요한 작업목록을 작성해주세요'
-      value: |
-        - [ ] Task1
-        - [ ] Task2
-    validations:
-      required: true
