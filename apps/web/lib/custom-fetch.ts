@@ -31,12 +31,15 @@ export async function customFetch<T extends CoreOutput>(
 
   if (!isLoggedIn) {
     // If the page being called is not a login or sign-up page, it will redirect to the login page.
+    const { pathname } = window.location
 
-    return {
-      ok: false,
-      data: undefined,
-      error: undefined,
-    } as T
+    if (!(pathname.includes('login') || pathname.includes('signup'))) {
+      return {
+        ok: false,
+        data: undefined,
+        error: undefined,
+      } as T
+    }
   }
 
   let res = await fetch(url, defaultOptions)

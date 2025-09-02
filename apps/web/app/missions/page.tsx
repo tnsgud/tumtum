@@ -10,10 +10,13 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { MissionList } from '@/components/mission-list'
 import { Plus, Search } from 'lucide-react'
+import { Dialog } from '@/components/ui/dialog'
+import { DialogContent, DialogTrigger } from '@radix-ui/react-dialog'
+import AddTodoDialog from '@/components/mission/add-todo-dialog'
 
 export default function MissionsPage() {
   return (
-    <div className="container py-6 space-y-6">
+    <div className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">미션 관리</h1>
@@ -21,9 +24,7 @@ export default function MissionsPage() {
             나의 성장을 위한 미션을 관리해보세요.
           </p>
         </div>
-        <Button className="bg-rose-500 hover:bg-rose-600 text-white">
-          <Plus className="mr-2 h-4 w-4" />새 미션 추가
-        </Button>
+        <AddTodoDialog />
       </div>
 
       <Card>

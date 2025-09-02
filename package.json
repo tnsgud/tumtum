@@ -1,5 +1,5 @@
 {
-  "name": "tumtum-monorepo",
+  "name": "tumtum",
   "private": true,
   "scripts": {
     "dev": "turbo run dev",

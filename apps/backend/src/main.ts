@@ -7,7 +7,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
   app.enableCors({
-    origin: 'http://macbookpro.tail2e04c4.ts.net:3000',
+    origin: [
+      'http://macbookpro.tail2e04c4.ts.net:3000',
+      'http://bagsunhyeong-ui-macbookpro.netbird.cloud:3000',
+    ],
     credentials: true,
     methods: 'GET,HEAD,PUT.PATCH,POST,DELETE,OPTIONS',
     allowedHeaders:
