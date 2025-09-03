@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Home, ListTodo, PenLine, User, Menu, X } from 'lucide-react'
 import { useMobile } from '@/hooks/use-mobile'
-import { authStore } from '@/stores/auth-store'
+import { authStore } from '@/old/stores/auth-store'
 
 export default function Navigation() {
   const pathname = usePathname()

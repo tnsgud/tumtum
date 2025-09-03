@@ -5,7 +5,7 @@ import { Button } from '../ui/button'
 import { Checkbox } from '../ui/checkbox'
 import { Label } from '../ui/label'
 import { Textarea } from '../ui/textarea'
-import { onboardingStore } from '@/stores/onboarding-store'
+import { onboardingStore } from '@/old/stores/onboarding-store'
 import { CheckedState } from '@radix-ui/react-checkbox'
 import { LaterButton } from './later-button'
 

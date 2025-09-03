@@ -12,8 +12,8 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { authStore } from '@/stores/auth-store'
-import { missionsStore } from '@/stores/missions-store'
+import { authStore } from '@/old/stores/auth-store'
+import { missionsStore } from '@/old/stores/missions-store'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect } from 'react'

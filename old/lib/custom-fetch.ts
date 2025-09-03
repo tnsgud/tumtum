@@ -1,4 +1,4 @@
-import { authStore } from '@/stores/auth-store'
+import { authStore } from '@/old/stores/auth-store'
 import {
   AuthError,
   AuthErrorCode,
