@@ -37,7 +37,7 @@ prisma/.env
 .turbo/
 
 # Next.js
-.next/*
+.next
 out/
 coverage/
 
