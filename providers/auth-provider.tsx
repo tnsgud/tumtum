@@ -1,7 +1,7 @@
 'use client'
 
 import { customFetch } from '@/lib/custom-fetch'
-import { authStore } from '@/old/stores/auth-store'
+import { authStore } from '@/stores/auth-store'
 import { RefreshOutput } from '@tumtum/shared'
 import React, { useState, useEffect } from 'react'
 

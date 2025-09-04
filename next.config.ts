@@ -1,7 +1,10 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
-const nextConfig: NextConfig = {
-  /* config options here */
-};
-
-export default nextConfig;
+export const nextConfig: NextConfig = {
+  allowedDevOrigins: [
+    'http://macbookpro.tail2e04c4.ts.net:3000',
+    'http://macbookpro.tail2e04c4.ts.net:8080',
+    'http://bagsunhyeong-ui-macbookpro.netbird.cloud:3000'
+  ],
+  crossOrigin: 'anonymous',
+}

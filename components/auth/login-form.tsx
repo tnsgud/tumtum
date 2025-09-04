@@ -16,7 +16,7 @@ import {
   UserError,
 } from '@tumtum/shared'
 import { useRouter } from 'next/navigation'
-import { authStore } from '@/old/stores/auth-store'
+import { authStore } from '@/stores/auth-store'
 
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'

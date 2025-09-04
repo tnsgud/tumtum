@@ -8,13 +8,14 @@ import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Home, ListTodo, PenLine, User, Menu, X } from 'lucide-react'
 import { useMobile } from '@/hooks/use-mobile'
-import { authStore } from '@/old/stores/auth-store'
+// import { authStore } from '@/old/stores/auth-store'
 
 export default function Navigation() {
   const pathname = usePathname()
   const isMobile = useMobile()
   const [isOpen, setIsOpen] = useState(false)
-  const { isLoggedIn } = authStore()
+  // const { isLoggedIn } = authStore()
+  const isLoggedIn = false;
 
   const navItems = [
     {

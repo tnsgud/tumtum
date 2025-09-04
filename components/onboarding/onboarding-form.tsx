@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ProfileTab } from './profile-tab'
 import { GoalsTab } from './goals-tab'
 import { RoutinesTab } from './routines-tab'
-import { type OnboardingTab, onboardingStore } from '@/old/stores/onboarding-store'
+import { type OnboardingTab, onboardingStore } from '@/stores/onboarding-store'
 import { JSX } from 'react'
 
 type Tab = {

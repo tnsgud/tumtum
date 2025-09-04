@@ -11,7 +11,7 @@ import { Badge } from '../ui/badge'
 import { X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
-import { onboardingStore } from '@/old/stores/onboarding-store'
+import { onboardingStore } from '@/stores/onboarding-store'
 import { Label } from '../ui/label'
 import { LaterButton } from './later-button'
 
