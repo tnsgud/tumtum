@@ -12,19 +12,10 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { authStore } from '@/stores/auth-store'
-import { missionsStore } from '@/stores/missions-store'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect } from 'react'
 
 export default function Home() {
-  const { getMissions } = missionsStore()
-  const { nickname } = authStore()
-
-  useEffect(() => {
-    getMissions()
-  }, [getMissions])
 
   return (
     <div className="container px-4 py-6 space-y-8">
@@ -32,7 +23,7 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              안녕하세요, {nickname}님 👋
+              안녕하세요, 님 👋
             </h1>
             <p className="text-muted-foreground">
               오늘도 성장하는 하루를 만들어보세요.

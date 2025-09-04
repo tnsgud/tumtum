@@ -2,24 +2,13 @@
 
 import type React from 'react'
 
-import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Github, Mail } from 'lucide-react'
-import { customFetch } from '@/lib/custom-fetch'
-import {
-  authErrorMessages,
-  CoreOutput,
-  LoginOutput,
-  UserError,
-} from '@tumtum/shared'
 import { useRouter } from 'next/navigation'
-import { authStore } from '@/stores/auth-store'
 
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
+import {useForm  } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Form,
@@ -29,21 +18,10 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form'
+import { createClient } from '@/utils/supabase/client'
+import { LoginFormItem, LoginFormSchema, loginFormSchema } from '../../app/login/types'
+import { login } from '@/app/login/actions'
 
-const loginFormSchema = z.object({
-  email: z
-    .string({ required_error: '필수 요소 입니다.' })
-    .email('올바른 이메일 형식이 아닙니다.'),
-  password: z.string().trim().min(1, '필수 요소 입니다.'),
-})
-
-type LoginFormSchema = z.infer<typeof loginFormSchema>
-type LoginFormItem = {
-  name: keyof LoginFormSchema
-  label: string
-  placeholder: string
-  inputType: 'email' | 'password'
-}
 
 const formItems: LoginFormItem[] = [
   {
@@ -69,33 +47,24 @@ export function LoginForm() {
       password: '',
     },
   })
-  const { login } = authStore()
 
-  const onSubmit = async ({ email, password }: LoginFormSchema) => {
-    const loginResponse = await customFetch<LoginOutput>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email: email, password: password }),
-    })
+  const onSubmit = async (formData: LoginFormSchema) => {
+    const supabase = await createClient();
+    const {data: {user}} = await login(formData);
 
-    if (!loginResponse.ok) {
-      return alert(authErrorMessages[loginResponse.error.code])
+    if(user === null) {
+      alert('존재하지 않는 계정')
+      return 
     }
 
-    login(loginResponse.data)
-
-    const onboardingStatusResponse = await customFetch<
-      CoreOutput<boolean, UserError>
-    >('/users/me/onboarding-status')
-
-    if (!onboardingStatusResponse.ok) {
-      return alert('온보딩 에러')
+    // onboarding 확인
+    const {data} = await supabase.from('onboarding_check').select("id").eq('user_id', user.id)
+    if(data?.length === 0)  {
+      router.push("/onboarding")
+      return
     }
 
-    if (!onboardingStatusResponse.data) {
-      return router.push('/onboarding')
-    }
-
-    router.push('/dashboard')
+    router.push('dashboard')
   }
 
   return (
