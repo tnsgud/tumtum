@@ -12,33 +12,85 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "13.0.4"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
+      category: {
+        Row: {
+          color: string
+          created_at: string
+          deleted_at: string | null
+          id: number
+          name: string
+          user_id: string
+        }
+        Insert: {
+          color: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: number
+          name: string
+          user_id?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: number
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      mission: {
+        Row: {
+          category_id: number
+          completed_at: string | null
+          created_at: string
+          deadline_at: string
+          deleted_at: string | null
+          elapsed_time: number
+          id: number
+          is_completed: boolean
+          started_at: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category_id: number
+          completed_at?: string | null
+          created_at?: string
+          deadline_at: string
+          deleted_at?: string | null
+          elapsed_time?: number
+          id?: number
+          is_completed?: boolean
+          started_at?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category_id?: number
+          completed_at?: string | null
+          created_at?: string
+          deadline_at?: string
+          deleted_at?: string | null
+          elapsed_time?: number
+          id?: number
+          is_completed?: boolean
+          started_at?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "category"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       onboarding_check: {
         Row: {
           created_at: string
@@ -191,9 +243,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },
