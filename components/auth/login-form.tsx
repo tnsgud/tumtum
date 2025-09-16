@@ -18,7 +18,7 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form';
-import { createClient } from '@/utils/supabase/client';
+import { browserClient } from '@/lib/supabase.browser';
 import {
   LoginFormItem,
   LoginFormSchema,
@@ -52,7 +52,7 @@ export function LoginForm() {
   });
 
   const onSubmit = async (formData: LoginFormSchema) => {
-    const supabase = await createClient();
+    const supabase = await browserClient();
     const {
       data: { user },
     } = await login(formData);

@@ -10,9 +10,10 @@ import {
 import { MoreHorizontal, Edit, Trash2, Calendar } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { Mission } from './mission-list';
+import { Mission } from './types';
 import { getDateString } from '@/lib/date-utils';
-import { createClient } from '@/utils/supabase/client';
+import { browserClient } from '@/lib/supabase.browser';
+import { getTextColorFromBackground } from '@/lib/ui-utils';
 
 interface Props {
   mission: Mission;
@@ -21,18 +22,6 @@ interface Props {
 }
 
 const priorities = ['low', 'medium', 'high'];
-
-function getTextColorFromBackground(backgroundColor: string): string {
-  const hex = backgroundColor.replace('#', '');
-
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-
-  return brightness > 128 ? 'text-black' : 'text-white';
-}
 
 const getPriorityColor = (priority: string) => {
   switch (priority) {
@@ -46,7 +35,7 @@ const getPriorityColor = (priority: string) => {
 };
 
 const onDeleteClick = async (id: number) => {
-  const supabase = createClient();
+  const supabase = browserClient();
   const result = await supabase
     .from('mission')
     .update({ deleted_at: new Date().toISOString() })

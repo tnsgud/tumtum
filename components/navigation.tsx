@@ -8,14 +8,14 @@ import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/mode-toggle';
 import { Home, ListTodo, PenLine, User, Menu, X } from 'lucide-react';
 import { useMobile } from '@/hooks/use-mobile';
-import { createClient } from '@/utils/supabase/client';
+import { browserClient } from '@/lib/supabase.browser';
 
 export default function Navigation() {
   const pathname = usePathname();
   const isMobile = useMobile();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const supabase = createClient();
+  const supabase = browserClient();
 
   // 렌더 중 구독/상태 업데이트 금지: useEffect로 이동
   useEffect(() => {

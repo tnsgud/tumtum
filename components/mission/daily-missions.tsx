@@ -1,50 +1,33 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
-import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
-import { Clock, Code, BookOpen, Coffee, Brain } from 'lucide-react';
-import { createClient } from '@/utils/supabase/client';
-import { Tables } from '@/database.types';
+import { browserClient } from '@/lib/supabase.browser';
+import { Mission } from './types';
+import { DailyMissionItem } from './daily-mission-item';
 
 export function DailyMissions() {
-  const supabase = createClient();
-  const [missions, setMissions] = useState<
-    (Tables<'mission'> & {
-      category: Tables<'category'>;
-    })[]
-  >([]);
+  const supabase = browserClient();
+  const [missions, setMissions] = useState<Mission[]>([]);
 
   useEffect(() => {
     const fetchMissions = async () => {
-      const {
-        data: { user },
-        error: authError,
-      } = await supabase.auth.getUser();
+      const day = new Date().toISOString().split('T')[0];
 
-      if (authError || !user) {
-        console.error('사용자 인증 오류:', authError);
-        return;
-      }
-
-      const { data } = await supabase.from('mission').select('*, category(*)');
+      const { data } = await supabase
+        .from('mission')
+        .select(
+          'id, title, deadline_at, is_completed, priority, category(color, name)'
+        )
+        .is('deleted_at', null)
+        .is('is_completed', false)
+        .gte('deadline_at', `${day}T0:00:00Z`)
+        .lte('deadline_at', `${day}T23:59:59Z`);
 
       setMissions(data ?? []);
     };
     fetchMissions();
   }, []);
-
-  function toggleMission(id: number): void {
-    setMissions(
-      missions.map((mission) =>
-        mission.id === id
-          ? { ...mission, is_completed: !mission.is_completed }
-          : mission
-      )
-    );
-  }
 
   return (
     <div className='space-y-4'>
@@ -57,52 +40,16 @@ export function DailyMissions() {
       </div>
 
       <div className='space-y-3'>
-        {missions.map((mission) => (
-          <div
-            key={mission.id}
-            className={cn(
-              'flex items-start space-x-3 rounded-lg border p-3 transition-colors',
-              mission.is_completed
-                ? 'border-muted bg-muted/50'
-                : 'border-border hover:border-rose-200 hover:bg-rose-50 dark:hover:border-rose-800 dark:hover:bg-rose-950/30'
-            )}
-          >
-            <Checkbox
-              checked={mission.is_completed}
-              onCheckedChange={() => toggleMission(mission.id)}
-              className={cn(
-                mission.is_completed
-                  ? 'border-rose-500 bg-rose-500 text-primary-foreground'
-                  : 'border-muted-foreground'
-              )}
+        {missions.length === 0 ? (
+          <div>등록된 미션이 없습니다.</div>
+        ) : (
+          missions.map((mission) => (
+            <DailyMissionItem
+              key={`daily-mission-${mission.id}`}
+              mission={mission}
             />
-            <div className='flex-1 space-y-1'>
-              <div className='flex items-center justify-between'>
-                <p
-                  className={cn(
-                    'font-medium',
-                    mission.is_completed && 'text-muted-foreground line-through'
-                  )}
-                >
-                  {mission.title}
-                </p>
-                <Badge
-                  variant='outline'
-                  style={{
-                    ['--bg-color' as any]: mission.category.color,
-                  }}
-                  className={cn('flex items-center gap-1 bg-[var(--bg-color)]')}
-                >
-                  <span className='text-xs'>{mission.category.name}</span>
-                </Badge>
-              </div>
-              <div className='flex items-center text-xs text-muted-foreground'>
-                <Clock className='mr-1 h-3 w-3' />
-                <span>{mission.elapsed_time}분</span>
-              </div>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

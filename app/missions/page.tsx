@@ -9,14 +9,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { MissionList } from '@/components/mission/mission-list';
 import AddTodoDialog from '@/components/mission/add-todo-dialog';
-import { createClient } from '@/utils/supabase/server';
+import { serverClient } from '@/lib/supabase.server';
 import { Search } from 'lucide-react';
 
 export default async function MissionsPage() {
-  const supabase = await createClient();
-  const { data: missions } = await supabase.from('mission').select('*');
+  const supabase = await serverClient();
+  const missionCount = (
+    await supabase
+      .from('mission')
+      .select('*', { count: 'estimated' })
+      .is('deleted_at', null)
+  ).count;
 
-  if (!missions) {
+  if (!missionCount || missionCount === 0) {
     return <div>등록된 미션이 없습니다.</div>;
   }
 
@@ -38,7 +43,7 @@ export default async function MissionsPage() {
             <div className='space-y-1'>
               <CardTitle>미션 리스트</CardTitle>
               <CardDescription>
-                총 {missions.length}개의 미션이 있습니다.
+                총 {missionCount}개의 미션이 있습니다.
               </CardDescription>
             </div>
             <div className='relative'>

@@ -10,12 +10,12 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { createClient } from '@/utils/supabase/server';
+import { serverClient } from '@/lib/supabase.server';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function Home() {
-  const supabase = await createClient();
+  const supabase = await serverClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

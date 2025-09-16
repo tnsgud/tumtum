@@ -1,12 +1,12 @@
 'use client';
 
-import { createClient } from '@/utils/supabase/client';
+import { browserClient } from '@/lib/supabase.browser';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
 
 export function LaterButton() {
   const router = useRouter();
-  const supabase = createClient();
+  const supabase = browserClient();
   const handleOnClick = async () => {
     const {
       data: { user },

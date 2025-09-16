@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Tables } from '@/database.types';
-import { createClient } from '@/utils/supabase/client';
+import { browserClient } from '@/lib/supabase.browser';
 import { MissionListItem } from './mission-list-item';
 import { getDateString } from '@/lib/date-utils';
+import type { Mission } from './types';
 
 type MissionListProps = {
   filter: 'all' | 'today' | 'upcoming' | 'completed';
@@ -19,12 +19,6 @@ function isFuture(dateString: string): boolean {
   const today = getDateString(new Date());
   return dateString > today;
 }
-
-// 'id, title, deadline_at, is_completed, priority, category(color, name)'
-export type Mission = Pick<
-  Tables<'mission'>,
-  'id' | 'title' | 'deadline_at' | 'is_completed' | 'priority'
-> & { category: Pick<Tables<'category'>, 'color' | 'name'> };
 
 export function MissionList({ filter }: MissionListProps) {
   const [missions, setMissions] = useState<Mission[]>([]);
@@ -52,7 +46,7 @@ export function MissionList({ filter }: MissionListProps) {
 
     // Supabase에 실제 업데이트
     try {
-      const supabase = createClient();
+      const supabase = browserClient();
       const { error } = await supabase
         .from('mission')
         .update({
@@ -93,7 +87,7 @@ export function MissionList({ filter }: MissionListProps) {
   };
   useEffect(() => {
     async function fetchData() {
-      const supabase = createClient();
+      const supabase = browserClient();
       const { data } = await supabase
         .from('mission')
         .select(

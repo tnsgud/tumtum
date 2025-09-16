@@ -25,7 +25,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { DatePickerWithInput } from '../ui/date-picker-with-input';
-import { createClient } from '@/utils/supabase/client';
+import { browserClient } from '@/lib/supabase.browser';
 import { Tables } from '@/database.types';
 import { useEffect, useState } from 'react';
 
@@ -66,7 +66,7 @@ export default function AddTodoDialog() {
     const deadlineDate = new Date(formData.deadline);
     deadlineDate.setHours(0, 0, 0, 0); // 로컬 타임존 기준으로 자정으로 설정
 
-    const supabase = await createClient();
+    const supabase = await browserClient();
     const { error } = await supabase.from('mission').insert({
       title: formData.title,
       category_id: Number(formData.category),
@@ -86,7 +86,7 @@ export default function AddTodoDialog() {
 
   useEffect(() => {
     async function fetchData() {
-      const supabase = createClient();
+      const supabase = browserClient();
       const { data } = await supabase.from('category').select('*');
 
       setCategories(data ?? []);
