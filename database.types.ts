@@ -48,12 +48,14 @@ export type Database = {
           created_at: string
           deadline_at: string
           deleted_at: string | null
-          elapsed_time: number
+          elapsed_time: number | null
           id: number
           is_completed: boolean
+          priority: number
           started_at: string | null
           title: string
           updated_at: string | null
+          user_id: string
         }
         Insert: {
           category_id: number
@@ -61,12 +63,14 @@ export type Database = {
           created_at?: string
           deadline_at: string
           deleted_at?: string | null
-          elapsed_time?: number
+          elapsed_time?: number | null
           id?: number
           is_completed?: boolean
+          priority?: number
           started_at?: string | null
           title: string
           updated_at?: string | null
+          user_id?: string
         }
         Update: {
           category_id?: number
@@ -74,12 +78,14 @@ export type Database = {
           created_at?: string
           deadline_at?: string
           deleted_at?: string | null
-          elapsed_time?: number
+          elapsed_time?: number | null
           id?: number
           is_completed?: boolean
+          priority?: number
           started_at?: string | null
           title?: string
           updated_at?: string | null
+          user_id?: string
         }
         Relationships: [
           {

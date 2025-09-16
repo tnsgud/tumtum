@@ -67,6 +67,7 @@ export function LoginForm() {
       .from('onboarding_check')
       .select('id')
       .eq('user_id', user.id);
+
     if (data?.length === 0) {
       router.push('/onboarding');
       return;

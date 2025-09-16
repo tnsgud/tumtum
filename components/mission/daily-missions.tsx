@@ -11,15 +11,41 @@ import { Tables } from '@/database.types';
 
 export function DailyMissions() {
   const supabase = createClient();
-  const [missions, setMissions] = useState<Tables<'mission'>[]>([]);
+  const [missions, setMissions] = useState<
+    (Tables<'mission'> & {
+      category: Tables<'category'>;
+    })[]
+  >([]);
 
   useEffect(() => {
     const fetchMissions = async () => {
-      const { data } = await supabase.from('mission').select('*');
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+
+      if (authError || !user) {
+        console.error('사용자 인증 오류:', authError);
+        return;
+      }
+
+      const { data } = await supabase.from('mission').select('*, category(*)');
+
       setMissions(data ?? []);
     };
     fetchMissions();
   }, []);
+
+  function toggleMission(id: number): void {
+    setMissions(
+      missions.map((mission) =>
+        mission.id === id
+          ? { ...mission, is_completed: !mission.is_completed }
+          : mission
+      )
+    );
+  }
+
   return (
     <div className='space-y-4'>
       <div className='space-y-2'>
@@ -43,7 +69,7 @@ export function DailyMissions() {
           >
             <Checkbox
               checked={mission.is_completed}
-              // onCheckedChange={() => toggleMission(mission.id)}
+              onCheckedChange={() => toggleMission(mission.id)}
               className={cn(
                 mission.is_completed
                   ? 'border-rose-500 bg-rose-500 text-primary-foreground'
@@ -62,13 +88,12 @@ export function DailyMissions() {
                 </p>
                 <Badge
                   variant='outline'
-                  className={cn(
-                    'flex items-center gap-1'
-                    // getCategoryColor(mission.category),
-                  )}
+                  style={{
+                    ['--bg-color' as any]: mission.category.color,
+                  }}
+                  className={cn('flex items-center gap-1 bg-[var(--bg-color)]')}
                 >
-                  {/* {getCategoryIcon(mission.category_id)} */}
-                  <span className='text-xs'>{mission.category_id}</span>
+                  <span className='text-xs'>{mission.category.name}</span>
                 </Badge>
               </div>
               <div className='flex items-center text-xs text-muted-foreground'>

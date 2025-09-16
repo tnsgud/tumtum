@@ -1,4 +1,4 @@
-import { DailyMissions } from '@/components/daily-missions';
+import { DailyMissions } from '@/components/mission/daily-missions';
 import { EmotionCheck } from '@/components/emotion-check';
 import { GrowthGraph } from '@/components/growth-graph';
 import { Button } from '@/components/ui/button';
@@ -17,8 +17,8 @@ import Link from 'next/link';
 export default async function Home() {
   const supabase = await createClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
   return (
     <div className='container px-4 py-6 space-y-8'>
@@ -26,7 +26,7 @@ export default async function Home() {
         <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
           <div>
             <h1 className='text-3xl font-bold tracking-tight'>
-              안녕하세요, {session?.user.user_metadata.display_name} 님 👋
+              안녕하세요, {user?.user_metadata.display_name} 님 👋
             </h1>
             <p className='text-muted-foreground'>
               오늘도 성장하는 하루를 만들어보세요.

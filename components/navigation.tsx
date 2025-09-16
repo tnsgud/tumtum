@@ -1,66 +1,81 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { ModeToggle } from '@/components/mode-toggle'
-import { Home, ListTodo, PenLine, User, Menu, X } from 'lucide-react'
-import { useMobile } from '@/hooks/use-mobile'
-// import { authStore } from '@/old/stores/auth-store'
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { ModeToggle } from '@/components/mode-toggle';
+import { Home, ListTodo, PenLine, User, Menu, X } from 'lucide-react';
+import { useMobile } from '@/hooks/use-mobile';
+import { createClient } from '@/utils/supabase/client';
 
 export default function Navigation() {
-  const pathname = usePathname()
-  const isMobile = useMobile()
-  const [isOpen, setIsOpen] = useState(false)
-  // const { isLoggedIn } = authStore()
-  const isLoggedIn = false;
+  const pathname = usePathname();
+  const isMobile = useMobile();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const supabase = createClient();
+
+  // 렌더 중 구독/상태 업데이트 금지: useEffect로 이동
+  useEffect(() => {
+    // 상태 변경 구독
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session?.user);
+    });
+
+    // 클린업
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
 
   const navItems = [
     {
       name: '홈',
-      href: '/',
-      icon: <Home className="h-5 w-5" />,
+      href: '/dashboard',
+      icon: <Home className='h-5 w-5' />,
     },
     {
       name: '미션',
       href: '/missions',
-      icon: <ListTodo className="h-5 w-5" />,
+      icon: <ListTodo className='h-5 w-5' />,
     },
     {
       name: '회고',
       href: '/retrospectives',
-      icon: <PenLine className="h-5 w-5" />,
+      icon: <PenLine className='h-5 w-5' />,
     },
     {
       name: '마이페이지',
       href: '/profile',
-      icon: <User className="h-5 w-5" />,
+      icon: <User className='h-5 w-5' />,
     },
-  ]
+  ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="w-full px-6 flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-bold text-rose-500 dark:text-rose-400">
+    <header className='sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+      <div className='w-full px-6 flex h-16 items-center justify-between'>
+        <div className='flex items-center gap-2'>
+          <Link href='/' className='flex items-center gap-2'>
+            <span className='text-xl font-bold text-rose-500 dark:text-rose-400'>
               텀텀
             </span>
-            <span className="hidden text-lg font-medium sm:inline-block">
+            <span className='hidden text-lg font-medium sm:inline-block'>
               TumTum
             </span>
           </Link>
         </div>
 
         {!isLoggedIn ? (
-          <div className="flex items-center gap-2">
-            <Link href="/login">
-              <Button variant="ghost">로그인</Button>
+          <div className='flex items-center gap-2'>
+            <Link href='/login'>
+              <Button variant='ghost'>로그인</Button>
             </Link>
-            <Link href="/signup">
-              <Button className="bg-rose-500 hover:bg-rose-600 text-white">
+            <Link href='/signup'>
+              <Button className='bg-rose-500 hover:bg-rose-600 text-white'>
                 회원가입
               </Button>
             </Link>
@@ -68,23 +83,23 @@ export default function Navigation() {
         ) : isMobile ? (
           <>
             <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
+              variant='ghost'
+              size='icon'
+              className='md:hidden'
               onClick={() => setIsOpen(!isOpen)}
-              aria-label="Toggle menu"
+              aria-label='Toggle menu'
             >
               {isOpen ? (
-                <X className="h-5 w-5" />
+                <X className='h-5 w-5' />
               ) : (
-                <Menu className="h-5 w-5" />
+                <Menu className='h-5 w-5' />
               )}
             </Button>
 
             {isOpen && (
-              <div className="fixed inset-0 top-16 z-50 grid h-[calc(100vh-4rem)] grid-flow-row auto-rows-max overflow-auto p-6 pb-32 bg-background animate-in slide-in-from-bottom-80 md:hidden">
-                <div className="relative z-20 grid gap-6 rounded-md p-4">
-                  <nav className="grid grid-flow-row auto-rows-max text-sm">
+              <div className='fixed inset-0 top-16 z-50 grid h-[calc(100vh-4rem)] grid-flow-row auto-rows-max overflow-auto p-6 pb-32 bg-background animate-in slide-in-from-bottom-80 md:hidden'>
+                <div className='relative z-20 grid gap-6 rounded-md p-4'>
+                  <nav className='grid grid-flow-row auto-rows-max text-sm'>
                     {navItems.map((item) => (
                       <Link
                         key={item.href}
@@ -93,7 +108,7 @@ export default function Navigation() {
                           'flex items-center gap-2 rounded-md px-3 py-4 text-base font-medium',
                           pathname === item.href
                             ? 'bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-300'
-                            : 'hover:bg-muted',
+                            : 'hover:bg-muted'
                         )}
                       >
                         {item.icon}
@@ -101,7 +116,7 @@ export default function Navigation() {
                       </Link>
                     ))}
                   </nav>
-                  <div className="flex justify-end">
+                  <div className='flex justify-end'>
                     <ModeToggle />
                   </div>
                 </div>
@@ -109,7 +124,7 @@ export default function Navigation() {
             )}
           </>
         ) : (
-          <nav className="flex items-center gap-6">
+          <nav className='flex items-center gap-6'>
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -118,7 +133,7 @@ export default function Navigation() {
                   'flex items-center gap-1 text-sm font-medium transition-colors hover:text-rose-600 dark:hover:text-rose-400',
                   pathname === item.href
                     ? 'text-rose-600 dark:text-rose-400'
-                    : 'text-muted-foreground',
+                    : 'text-muted-foreground'
                 )}
               >
                 {item.icon}
@@ -130,5 +145,5 @@ export default function Navigation() {
         )}
       </div>
     </header>
-  )
+  );
 }
