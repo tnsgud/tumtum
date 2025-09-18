@@ -21,7 +21,8 @@ export default async function Home() {
   } = await supabase.auth.getUser();
 
   return (
-    <div className='container px-4 py-6 space-y-8'>
+    //  px-4
+    <div className='container py-6 space-y-8'>
       <section className='space-y-4'>
         <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
           <div>
@@ -59,9 +60,17 @@ export default async function Home() {
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>오늘의 감정</CardTitle>
-            <CardDescription>지금 기분이 어떠신가요?</CardDescription>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-10'>
+            <div className='space-y-1'>
+              <CardTitle>오늘의 감정</CardTitle>
+              <CardDescription>지금 기분이 어떠신가요?</CardDescription>
+            </div>
+            <Link href='/retrospectives'>
+              <Button variant='ghost' size='sm' className='gap-1'>
+                작성하기
+                <ArrowRight className='h-4 w-4' />
+              </Button>
+            </Link>
           </CardHeader>
           <CardContent>
             <EmotionCheck />

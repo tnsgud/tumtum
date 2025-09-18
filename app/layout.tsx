@@ -34,7 +34,7 @@ export default function RootLayout({
         <ThemeProvider attribute='class' defaultTheme='system'>
           <div className='flex min-h-screen flex-col'>
             <Navigation />
-            <main className='flex-1'>{children}</main>
+            <main className='flex-1 flex justify-center'>{children}</main>
           </div>
           <Toaster />
         </ThemeProvider>

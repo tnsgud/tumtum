@@ -41,6 +41,36 @@ export type Database = {
         }
         Relationships: []
       }
+      emotion: {
+        Row: {
+          category: number
+          created_at: string
+          dark_mode_color: string
+          default_color: string
+          emoji: string
+          id: number
+          name: string
+        }
+        Insert: {
+          category: number
+          created_at?: string
+          dark_mode_color?: string
+          default_color?: string
+          emoji: string
+          id?: number
+          name: string
+        }
+        Update: {
+          category?: number
+          created_at?: string
+          dark_mode_color?: string
+          default_color?: string
+          emoji?: string
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
       mission: {
         Row: {
           category_id: number
