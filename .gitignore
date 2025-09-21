@@ -47,3 +47,4 @@ npm-debug.log
 .pnpm-store
 
 .supabase-db-password.txt
+certificates
