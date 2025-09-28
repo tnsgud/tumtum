@@ -8,29 +8,14 @@ import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/mode-toggle';
 import { Home, ListTodo, PenLine, User, Menu, X } from 'lucide-react';
 import { useMobile } from '@/hooks/use-mobile';
+import { useAuthStore } from '@/stores/auth-store'
 import { browserClient } from '@/lib/supabase.browser';
 
 export default function Navigation() {
   const pathname = usePathname();
   const isMobile = useMobile();
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const supabase = browserClient();
-
-  // 렌더 중 구독/상태 업데이트 금지: useEffect로 이동
-  useEffect(() => {
-    // 상태 변경 구독
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session?.user);
-    });
-
-    // 클린업
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [supabase]);
+  const {isLoggined} = useAuthStore();
 
   const navItems = [
     {
@@ -69,7 +54,7 @@ export default function Navigation() {
           </Link>
         </div>
 
-        {!isLoggedIn ? (
+        {!isLoggined ? (
           <div className='flex items-center gap-2'>
             <Link href='/login'>
               <Button variant='ghost'>로그인</Button>

@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ProfileTab } from './profile-tab'
 import { GoalsTab } from './goals-tab'
 import { RoutinesTab } from './routines-tab'
-import { type OnboardingTab, onboardingStore } from '@/stores/onboarding-store'
+import { type OnboardingTab, useOnboardingStore } from '@/stores/onboarding-store'
 import { JSX } from 'react'
 
 type Tab = {
@@ -19,7 +19,7 @@ export function OnboardingForm() {
     { id: 'goals', name: '목표', element: <GoalsTab /> },
     { id: 'routines', name: '루틴', element: <RoutinesTab /> },
   ]
-  const { activeTab, setActiveTab } = onboardingStore()
+  const { activeTab, setActiveTab } = useOnboardingStore()
 
   return (
     <Tabs

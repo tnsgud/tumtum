@@ -41,7 +41,7 @@ interface OnboardingStore {
   // routinesValidate: () => boolean
 }
 
-export const onboardingStore = create<OnboardingStore>((set, get) => ({
+export const useOnboardingStore = create<OnboardingStore>((set, get) => ({
   activeTab: 'profile',
   setActiveTab: (activeTab) => set({ activeTab }),
   onNextTab: () => {

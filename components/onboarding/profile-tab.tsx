@@ -11,7 +11,7 @@ import { Badge } from '../ui/badge'
 import { X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
-import { onboardingStore } from '@/stores/onboarding-store'
+import { useOnboardingStore } from '@/stores/onboarding-store'
 import { Label } from '../ui/label'
 import { LaterButton } from './later-button'
 
@@ -62,7 +62,7 @@ export function ProfileTab() {
     setExperience,
     setInterests,
     onNextTab,
-  } = onboardingStore()
+  } = useOnboardingStore()
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== 'Enter') return

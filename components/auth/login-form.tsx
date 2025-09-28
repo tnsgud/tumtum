@@ -25,6 +25,7 @@ import {
   loginFormSchema,
 } from '../../app/login/types';
 import { login } from '@/app/login/actions';
+import { useAuthStore } from '@/stores/auth-store';
 
 const formItems: LoginFormItem[] = [
   {
@@ -42,6 +43,7 @@ const formItems: LoginFormItem[] = [
 ];
 
 export function LoginForm() {
+    const authStore = useAuthStore();
   const router = useRouter();
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(loginFormSchema),
@@ -61,6 +63,9 @@ export function LoginForm() {
       alert('존재하지 않는 계정');
       return;
     }
+
+    authStore.setIsLoggined(true)
+    authStore.setUser(user)
 
     // onboarding 확인
     const { data } = await supabase

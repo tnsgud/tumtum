@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
 import { Label } from '../ui/label'
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group'
-import { onboardingStore } from '@/stores/onboarding-store'
+import { useOnboardingStore } from '@/stores/onboarding-store'
 import { Check, Pencil, Plus, Trash } from 'lucide-react'
 import { Input } from '../ui/input'
 import { ChangeEvent } from 'react'
@@ -18,7 +18,7 @@ export function RoutinesTab() {
     setRoutine,
     findRoutine,
     onPrevTab,
-  } = onboardingStore()
+  } = useOnboardingStore()
 
   const handleChangeName = (e: ChangeEvent<HTMLInputElement>, id: string) => {
     const { routine } = findRoutine(id)

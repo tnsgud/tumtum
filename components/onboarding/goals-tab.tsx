@@ -5,7 +5,7 @@ import { Button } from '../ui/button'
 import { Checkbox } from '../ui/checkbox'
 import { Label } from '../ui/label'
 import { Textarea } from '../ui/textarea'
-import { onboardingStore } from '@/stores/onboarding-store'
+import { useOnboardingStore } from '@/stores/onboarding-store'
 import { CheckedState } from '@radix-ui/react-checkbox'
 import { LaterButton } from './later-button'
 
@@ -52,7 +52,7 @@ export function GoalsTab() {
     setRequiredForGoal,
     onNextTab,
     onPrevTab,
-  } = onboardingStore()
+  } = useOnboardingStore()
 
   const handleOnChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const { id, value } = e.currentTarget
