@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import Navigation from '@/components/navigation';
+import { SWRProvider } from '@/components/swr-provider';
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -31,6 +32,7 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
+        <SWRProvider>
         <ThemeProvider attribute='class' defaultTheme='system'>
           <div className='flex min-h-screen flex-col'>
             <Navigation />
@@ -38,6 +40,7 @@ export default function RootLayout({
           </div>
           <Toaster />
         </ThemeProvider>
+        </SWRProvider>
       </body>
     </html>
   );

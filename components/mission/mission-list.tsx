@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { browserClient } from '@/lib/supabase.browser';
 import { MissionListItem } from './mission-list-item';
 import { getDateString } from '@/lib/date-utils';
-import type { Mission } from './types';
+import { Mission } from './types';
 
 type MissionListProps = {
-  filter: 'all' | 'today' | 'upcoming' | 'completed';
+  filter: 'all' | 'today' | 'upcoming' | 'completed' | 'not_completed';
+  data: Mission[]
 };
 
 function isToday(dateString: string): boolean {
@@ -19,15 +20,31 @@ function isFuture(dateString: string): boolean {
   const today = getDateString(new Date());
   return dateString > today;
 }
+// async function fecther(): Promise<Mission[]> {
+//   const supabase = browserClient();
+//   const { data, error } = await supabase
+//     .from('mission')
+//     .select(
+//       'id, title, deadline_at, is_completed, priority, category(color, name)'
+//     )
+//     .is('deleted_at', null);
 
-export function MissionList({ filter }: MissionListProps) {
-  const [missions, setMissions] = useState<Mission[]>([]);
+
+//   if (error) {
+//     throw error;
+//   }
+
+//   return data ?? [];
+// }
+
+export function MissionList({ filter, data }: MissionListProps) {
+  const [missions, setMissions] = useState(data)
   const [updatingMissions, setUpdatingMissions] = useState<Set<number>>(
     new Set()
   );
 
   const toggleMission = async (id: number) => {
-    const mission = missions.find((m) => m.id === id);
+    const mission = missions?.find((m) => m.id === id);
     if (!mission || updatingMissions.has(id)) return; // 이미 업데이트 중이면 무시
 
     const newCompletedState = !mission.is_completed;
@@ -37,7 +54,7 @@ export function MissionList({ filter }: MissionListProps) {
 
     // Optimistic update: UI를 먼저 업데이트
     setMissions(
-      missions.map((mission) =>
+      missions?.map((mission) =>
         mission.id === id
           ? { ...mission, is_completed: newCompletedState }
           : mission
@@ -58,7 +75,7 @@ export function MissionList({ filter }: MissionListProps) {
       if (error) {
         // 실패 시 원래 상태로 되돌리기
         setMissions(
-          missions.map((mission) =>
+          missions?.map((mission) =>
             mission.id === id
               ? { ...mission, is_completed: !newCompletedState }
               : mission
@@ -69,7 +86,7 @@ export function MissionList({ filter }: MissionListProps) {
     } catch (error) {
       // 네트워크 오류 등으로 실패 시 원래 상태로 되돌리기
       setMissions(
-        missions.map((mission) =>
+        missions?.map((mission) =>
           mission.id === id
             ? { ...mission, is_completed: !newCompletedState }
             : mission
@@ -84,25 +101,11 @@ export function MissionList({ filter }: MissionListProps) {
         return newSet;
       });
     }
+
   };
-  useEffect(() => {
-    async function fetchData() {
-      const supabase = browserClient();
-      const { data } = await supabase
-        .from('mission')
-        .select(
-          'id, title, deadline_at, is_completed, priority, category(color, name)'
-        )
-        .is('deleted_at', null);
-      // .eq('deleted_at', '');
 
-      setMissions(data ?? []);
-    }
 
-    fetchData();
-  }, []);
-
-  const filteredMissions = missions.filter((mission) => {
+  const filteredMissions = missions?.filter((mission) => {
     const missionDate = getDateString(mission.deadline_at);
 
     switch (filter) {
@@ -112,6 +115,8 @@ export function MissionList({ filter }: MissionListProps) {
         return isFuture(missionDate) && !mission.is_completed;
       case 'completed':
         return mission.is_completed;
+      case 'not_completed':
+        return !mission.is_completed
       default:
         return true;
     }
@@ -119,12 +124,12 @@ export function MissionList({ filter }: MissionListProps) {
 
   return (
     <div className='space-y-4'>
-      {filteredMissions.length === 0 ? (
+      {filteredMissions?.length === 0 ? (
         <div className='flex flex-col items-center justify-center py-12 text-center'>
           <p className='text-muted-foreground'>미션이 없습니다.</p>
         </div>
       ) : (
-        filteredMissions.map((mission) => (
+        filteredMissions?.map((mission) => (
           <MissionListItem
             key={`mission-item-${mission.id}`}
             onCheckedChange={() => toggleMission(mission.id)}

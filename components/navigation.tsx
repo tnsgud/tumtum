@@ -15,7 +15,8 @@ export default function Navigation() {
   const pathname = usePathname();
   const isMobile = useMobile();
   const [isOpen, setIsOpen] = useState(false);
-  const {isLoggined} = useAuthStore();
+  const supabase = browserClient();
+  const {isLoggined, setIsLoggined, setUser} = useAuthStore();
 
   const navItems = [
     {
@@ -39,6 +40,15 @@ export default function Navigation() {
       icon: <User className='h-5 w-5' />,
     },
   ];
+
+  useEffect(() => { 
+    supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session !== null) {
+        setIsLoggined(true);
+        setUser(session.user)
+      }
+    })
+  },[] )
 
   return (
     <header className='sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>

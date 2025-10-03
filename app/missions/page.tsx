@@ -9,17 +9,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { MissionList } from '@/components/mission/mission-list';
 import AddTodoDialog from '@/components/mission/add-todo-dialog';
-import { serverClient } from '@/lib/supabase.server';
 import { Search } from 'lucide-react';
+import { Suspense} from 'react'
+import { getMissions } from './actions';
 
 export default async function MissionsPage() {
-  const supabase = await serverClient();
-  const missionCount = (
-    await supabase
-      .from('mission')
-      .select('*', { count: 'estimated' })
-      .is('deleted_at', null)
-  ).count;
+  const data = await getMissions();
+  const missionCount = data?.length
+
 
   if (!missionCount || missionCount === 0) {
     return <div>등록된 미션이 없습니다.</div>;
@@ -63,18 +60,24 @@ export default async function MissionsPage() {
               <TabsTrigger value='today'>오늘</TabsTrigger>
               <TabsTrigger value='upcoming'>예정</TabsTrigger>
               <TabsTrigger value='completed'>완료</TabsTrigger>
+              <TabsTrigger value='not_completed'>미완료</TabsTrigger>
             </TabsList>
             <TabsContent value='all'>
-              <MissionList filter='all' />
+              <Suspense fallback={<div>loading...</div>}>
+                <MissionList filter='all' data={data} />
+              </Suspense>
             </TabsContent>
             <TabsContent value='today'>
-              <MissionList filter='today' />
+              <MissionList filter='today' data={data} />
             </TabsContent>
             <TabsContent value='upcoming'>
-              <MissionList filter='upcoming' />
+              <MissionList filter='upcoming' data={data} />
             </TabsContent>
             <TabsContent value='completed'>
-              <MissionList filter='completed' />
+              <MissionList filter='completed' data={data} />
+            </TabsContent>
+            <TabsContent value='not_completed'>
+              <MissionList filter='not_completed' data={data} />
             </TabsContent>
           </Tabs>
         </CardContent>

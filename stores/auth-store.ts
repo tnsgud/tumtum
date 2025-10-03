@@ -1,6 +1,5 @@
 import { create } from 'zustand'
 import { User } from '@supabase/supabase-js'
-import { browserClient } from '@/lib/supabase.browser';
 
 interface LoginStateStore {
   isLoggined: boolean;
@@ -10,15 +9,14 @@ interface LoginStateStore {
   setUser: (v:User) => void
 }
 
-const supabase = browserClient();
-const { data: {user} } = await supabase.auth.getUser();
-
-const useAuthStore = create<LoginStateStore>((set) => ({
-  isLoggined: user === null ? false : true,
-  user: user,
+const useAuthStore = create<LoginStateStore>((set) => {
+  return {
+  isLoggined:false ,
+  user: null,
   setIsLoggined: (v) => set((s) => ({...s, isLoggined:v})),
   setUser: (v) => set((s) => ({...s, user:v})),
-}))
+} 
+})
 
 
 export {useAuthStore}
