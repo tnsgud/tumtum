@@ -38,11 +38,15 @@ function isFuture(dateString: string): boolean {
   return dateString > today;
 }
 
-export async function MissionList({ filter }: MissionListProps) {
-  const { missions, setMissions } = useMissionStore();
+export function MissionList({ filter }: MissionListProps) {
+  const { missions, setMissions, initMissions, init } = useMissionStore();
   const [updatingMissions, setUpdatingMissions] = useState<Set<number>>(
     new Set()
   );
+
+  if(!init){
+    initMissions();
+  }
 
   const toggleMission = async (id: number) => {
     const mission = missions?.find((m) => m.id === id);
