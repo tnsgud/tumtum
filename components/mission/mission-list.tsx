@@ -3,14 +3,30 @@
 import { useState } from 'react';
 import { browserClient } from '@/lib/supabase.browser';
 import { MissionListItem } from './mission-list-item';
-import { getDateString, dateFormat } from '@/lib/date-utils';
+import { dateFormat } from '@/lib/date-utils';
 import { Mission } from './types';
 import { useMissionStore } from '@/stores/mission-store';
 
 type MissionListProps = {
   filter: 'all' | 'today' | 'upcoming' | 'completed' | 'not_completed';
-  data: Mission[]
+  data?: Mission[]
 };
+
+// const getMissions = async () => {
+//   const supabase = browserClient();
+//   const {data, error} = await supabase
+//     .from('mission')
+//     .select(
+//       'id, title, deadline_at, is_completed, priority, category(color, name)'
+//     )
+//     .is('deleted_at', null);
+
+//   if (error) {
+//     throw error;
+//   }
+
+//   return data ?? [];
+// }
 
 function isToday(dateString: string): boolean {
   const today = dateFormat(new Date());
@@ -22,9 +38,8 @@ function isFuture(dateString: string): boolean {
   return dateString > today;
 }
 
-export function MissionList({ filter}: MissionListProps) {
+export async function MissionList({ filter }: MissionListProps) {
   const { missions, setMissions } = useMissionStore();
-  // const [missions, setMissions] = useState(data)
   const [updatingMissions, setUpdatingMissions] = useState<Set<number>>(
     new Set()
   );
@@ -92,7 +107,7 @@ export function MissionList({ filter}: MissionListProps) {
 
 
   const filteredMissions = missions?.filter((mission) => {
-    const missionDate = getDateString(mission.deadline_at);
+    const missionDate = dateFormat(mission.deadline_at);
 
     switch (filter) {
       case 'today':

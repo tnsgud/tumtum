@@ -91,7 +91,6 @@ export function ProfileTab() {
           <Select
             defaultValue={name === 'experience' ? experience : job}
             onValueChange={(v) => {
-              console.log(v, regexp.test(v))
               regexp.test(v) ? setExperience(v) : setJob(v)
             }}
           >

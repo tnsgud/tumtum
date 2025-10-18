@@ -1,19 +1,14 @@
-import {serverClient} from '@/lib/supabase.server'
+import { serverClient } from '@/lib/supabase.server'
 
-const getMissions = async () => {
-  const supabase = await serverClient();
-  const {data, error} = await supabase
-    .from('mission')
-    .select(
-      'id, title, deadline_at, is_completed, priority, category(color, name)'
-    )
-    .is('deleted_at', null);
+const getMissionCount = async () => {
+  const supabase = await serverClient(); 
+  const { data } = await supabase.from('mission').select('id').is('deleted_at', null);
 
-  if (error) {
-    throw error;
-  }
+  if (!data) return 0;
 
-  return data ?? [];
+  return data.length;
 }
 
-export { getMissions}
+
+
+export { getMissionCount }

@@ -28,6 +28,7 @@ import { DatePickerWithInput } from '../ui/date-picker-with-input';
 import { browserClient } from '@/lib/supabase.browser';
 import { Tables } from '@/database.types';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const addTodoSchema = z.object({
   title: z.string().min(1),
@@ -59,8 +60,15 @@ export default function AddTodoDialog() {
   const { formState } = form;
   const isFormValid =
     formState.isValid && Object.values(formState.dirtyFields).length === 4;
+  const router = useRouter();
+  let test = true
 
   const onSubmit = async (formData: AddFormSchema) => {
+    if (test) {
+      alert('refresh');
+      return router.refresh();
+    }
+
     // 사용자의 로컬 타임존을 고려한 날짜 저장
     // 날짜만 저장하고 시간은 00:00:00으로 설정하여 타임존 문제 방지
     const deadlineDate = new Date(formData.deadline);
@@ -79,6 +87,7 @@ export default function AddTodoDialog() {
       console.error('미션 저장 오류:', error);
     } else {
       // 성공 시 dialog 닫기
+      router.refresh();
       setOpen(false);
       form.reset();
     }

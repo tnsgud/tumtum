@@ -99,7 +99,6 @@ export function DatePickerWithInput({
               }}
               onSelect={(d) => {
                 if (d && isValidDate(d)) {
-                  console.log(d);
                   onChange(d);
                   setInputValue(formatDate(d));
                 }

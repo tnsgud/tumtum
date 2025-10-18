@@ -10,17 +10,10 @@ import { Input } from '@/components/ui/input';
 import { MissionList } from '@/components/mission/mission-list';
 import AddTodoDialog from '@/components/mission/add-todo-dialog';
 import { Search } from 'lucide-react';
-import { Suspense} from 'react'
-import { getMissions } from './actions';
+import { getMissionCount } from './actions';
 
 export default async function MissionsPage() {
-  const data = await getMissions();
-  const missionCount = data?.length
-
-
-  if (!missionCount || missionCount === 0) {
-    return <div>등록된 미션이 없습니다.</div>;
-  }
+  const missionCount = await getMissionCount();
 
   return (
     <div className='space-y-6 max-sm:flex-1'>
@@ -63,21 +56,19 @@ export default async function MissionsPage() {
               <TabsTrigger value='not_completed'>미완료</TabsTrigger>
             </TabsList>
             <TabsContent value='all'>
-              <Suspense fallback={<div>loading...</div>}>
-                <MissionList filter='all' data={data} />
-              </Suspense>
+                <MissionList filter='all' />
             </TabsContent>
             <TabsContent value='today'>
-              <MissionList filter='today' data={data} />
+              <MissionList filter='today'  />
             </TabsContent>
             <TabsContent value='upcoming'>
-              <MissionList filter='upcoming' data={data} />
+              <MissionList filter='upcoming'  />
             </TabsContent>
             <TabsContent value='completed'>
-              <MissionList filter='completed' data={data} />
+              <MissionList filter='completed'  />
             </TabsContent>
             <TabsContent value='not_completed'>
-              <MissionList filter='not_completed' data={data} />
+              <MissionList filter='not_completed'  />
             </TabsContent>
           </Tabs>
         </CardContent>
