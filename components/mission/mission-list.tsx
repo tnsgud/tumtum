@@ -39,13 +39,13 @@ function isFuture(dateString: string): boolean {
 }
 
 export function MissionList({ filter }: MissionListProps) {
-  const { missions, setMissions, initMissions, init } = useMissionStore();
+  const { missions, setMissions, refresh, init } = useMissionStore();
   const [updatingMissions, setUpdatingMissions] = useState<Set<number>>(
     new Set()
   );
 
   if(!init){
-    initMissions();
+    refresh(true);
   }
 
   const toggleMission = async (id: number) => {
