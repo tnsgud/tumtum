@@ -11,7 +11,7 @@ import { MoreHorizontal, Edit, Trash2, Calendar } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Mission } from './types';
-import { getDateString } from '@/lib/date-utils';
+import { dateFormat } from '@/lib/date-utils';
 import { browserClient } from '@/lib/supabase.browser';
 import { getTextColorFromBackground } from '@/lib/ui-utils';
 
@@ -126,7 +126,7 @@ function MissionListItem({
           </Badge>
           <div className='flex items-center text-muted-foreground'>
             <Calendar className='mr-1 h-3 w-3' />
-            <span>{getDateString(new Date(mission.deadline_at))}</span>
+            <span>{dateFormat(mission.deadline_at)}</span>
           </div>
         </div>
       </div>
