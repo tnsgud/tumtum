@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '../ui/dropdown-menu';
-import { MoreHorizontal, Edit, Trash2, Calendar } from 'lucide-react';
+import { MoreHorizontal, Edit, Trash2, Calendar, Check } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Mission } from './types';
@@ -17,6 +17,8 @@ import { dateFormat } from '@/lib/date-utils';
 import { browserClient } from '@/lib/supabase.browser';
 import { getTextColorFromBackground } from '@/lib/ui-utils';
 import { useMissionStore } from '@/stores/mission-store';
+import { useState } from 'react';
+import { Input } from '../ui/input';
 
 interface Props {
   mission: Mission;
@@ -43,8 +45,32 @@ function MissionListItem({
   onCheckedChange,
   isUpdating = false,
 }: Props) {
+  const [isEdit, setIsEdit] = useState(false)
+  const [editTitle, setEditTitle] = useState(mission.title)
   const refresh = useMissionStore((state) => state.refresh);
 
+  const onEditCompltedClick = async () => {
+    const supabase = browserClient();
+    const { error } = await supabase.from('mission').update({
+      title: editTitle,
+      updated_at: new Date().toISOString(),
+    }).eq('id', mission.id)
+
+    if (error) {
+      alert('문제가 발생했습니다. 관리자한테 문의해주세요.')
+      console.log(error)
+      return;
+    }
+
+    setIsEdit(false)
+  }
+
+  const onEditClick = () => {
+    if (isEdit) return
+
+    setIsEdit(true);
+  } 
+  
 
   const onDeleteClick = async (id: number) => {
     const supabase = browserClient();
@@ -84,14 +110,31 @@ function MissionListItem({
       />
       <div className='flex-1 space-y-2'>
         <div className='flex items-start justify-between'>
-          <p
-            className={cn(
-              'font-medium',
-              mission.is_completed && 'text-muted-foreground line-through'
-            )}
-          >
-            {mission.title}
-          </p>
+          {isEdit ? 
+            <div className='relative flex-1'>
+              <Button variant='ghost' size='icon'
+                className='absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground'
+                onClick={onEditCompltedClick}
+               >
+                <Check  />
+              </Button>
+              <Input
+                value={editTitle}
+                type='search'
+                className='w-full pl-8'
+                onChange={(e) => setEditTitle(e.currentTarget.value)}
+              />
+            </div>
+ :
+            <p
+              className={cn(
+                'font-medium',
+                mission.is_completed && 'text-muted-foreground line-through'
+              )}
+            >
+              {editTitle}
+            </p>
+          }
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='ghost' size='icon' className='h-8 w-8'>
@@ -100,7 +143,7 @@ function MissionListItem({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={onEditClick}>
                 <Edit className='mr-2 h-4 w-4' />
                 <span>수정</span>
               </DropdownMenuItem>
