@@ -18,6 +18,8 @@ import {
   SelectContent,
   SelectItem,
   SelectValue,
+  SelectGroup,
+  SelectSeparator
 } from '../ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
 
@@ -30,6 +32,12 @@ import { Tables } from '@/database.types';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMissionStore } from '@/stores/mission-store';
+
+const addCategory = z.object({
+  category: z.string()
+})
+
+type AddCategorySchema = z.infer<typeof addCategory>
 
 const addTodoSchema = z.object({
   title: z.string().min(1),
@@ -50,6 +58,13 @@ export default function AddTodoDialog() {
   const missionRefresh = useMissionStore((state) => state.refresh);
   const [categories, setCategories] = useState<Tables<'category'>[]>([]);
   const [open, setOpen] = useState(false);
+  const [addCategorDialogOpen, setAddCategoryDialogOpen] = useState(false);
+  const addCategoryForm = useForm<AddCategorySchema>({
+    resolver: zodResolver(addCategory),
+    defaultValues: {
+      category: ''
+    }
+  })
   const form = useForm<AddFormSchema>({
     resolver: zodResolver(addTodoSchema),
     defaultValues: {
@@ -63,6 +78,24 @@ export default function AddTodoDialog() {
   const isFormValid =
     formState.isValid && Object.values(formState.dirtyFields).length === 4;
   const router = useRouter();
+
+  const categoryDialogOnSubmit = async (formData: AddCategorySchema) => {
+    const supabase = browserClient();
+    const { error } = await supabase.from('category').insert({name: formData.category, color: '#c7fcff'})
+
+    if (error) {
+      alert('문제가 발생했으니 관리자한테 문의하세요.')
+      console.log(error);
+
+      return;
+    }
+
+    const { data } = await supabase.from('category').select('*');
+    setCategories(data ?? []);
+    
+    addCategoryForm.reset();
+    setAddCategoryDialogOpen(false);
+  }
 
   const onSubmit = async (formData: AddFormSchema) => {
     // 사용자의 로컬 타임존을 고려한 날짜 저장
@@ -102,6 +135,51 @@ export default function AddTodoDialog() {
   }, []);
 
   return (
+    <>
+      <Dialog
+        open={addCategorDialogOpen}
+        onOpenChange={(isOpen) => {
+          setAddCategoryDialogOpen(isOpen)
+        }}
+      >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>카테고리 수정</DialogTitle>
+        </DialogHeader>
+        <Form {...addCategoryForm}>
+          <form onSubmit={addCategoryForm.handleSubmit(categoryDialogOnSubmit)}>
+
+            {/* <FormField
+              name='title'
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>제목</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder={'title'} />
+                  </FormControl>
+                </FormItem>
+              )}
+            /> */}
+            <FormField
+              name='category'
+              control={addCategoryForm.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>test</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder='name'/>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <Button>
+              Add Category
+            </Button>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
     <Dialog
       open={open}
       onOpenChange={(isOpen) => {
@@ -152,14 +230,27 @@ export default function AddTodoDialog() {
                       <SelectValue placeholder={'choose todo category'} />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map((v) => (
-                        <SelectItem
-                          key={`todo-category-${v.id}`}
-                          value={`${v.id}`}
-                        >
-                          {v.name}
-                        </SelectItem>
-                      ))}
+                      <SelectGroup>
+                        {categories.map((v) => (
+                          <SelectItem
+                            key={`todo-category-${v.id}`}
+                            value={`${v.id}`}
+                          >
+                            {v.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                      <SelectSeparator/>
+                      <Button
+                        size='lg'
+                        variant='ghost'
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setAddCategoryDialogOpen(true)
+                        }} 
+                      >
+                        Add Category
+                      </Button>
                     </SelectContent>
                   </Select>
                 </FormItem>
@@ -229,5 +320,6 @@ export default function AddTodoDialog() {
         </Form>
       </DialogContent>
     </Dialog>
+    </>
   );
 }
