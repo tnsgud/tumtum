@@ -10,6 +10,7 @@ import { Home, ListTodo, PenLine, User, Menu, X } from 'lucide-react';
 import { useMobile } from '@/hooks/use-mobile';
 import { useAuthStore } from '@/stores/auth-store'
 import { browserClient } from '@/lib/supabase.browser';
+import { SignOutButton } from './auth/sign-out-button';
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -105,6 +106,7 @@ export default function Navigation() {
                             ? 'bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-300'
                             : 'hover:bg-muted'
                         )}
+                        onClick={(e) => setIsOpen(false)}
                       >
                         {item.icon}
                         {item.name}
@@ -112,6 +114,7 @@ export default function Navigation() {
                     ))}
                   </nav>
                   <div className='flex justify-end'>
+                    <SignOutButton />
                     <ModeToggle />
                   </div>
                 </div>
@@ -135,6 +138,7 @@ export default function Navigation() {
                 <span>{item.name}</span>
               </Link>
             ))}
+            <SignOutButton />
             <ModeToggle />
           </nav>
         )}
