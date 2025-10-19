@@ -1,3 +1,5 @@
+'use client'
+
 import { cn } from '@/lib/utils';
 import { Checkbox } from '../ui/checkbox';
 import {
@@ -14,6 +16,7 @@ import { Mission } from './types';
 import { dateFormat } from '@/lib/date-utils';
 import { browserClient } from '@/lib/supabase.browser';
 import { getTextColorFromBackground } from '@/lib/ui-utils';
+import { useMissionStore } from '@/stores/mission-store';
 
 interface Props {
   mission: Mission;
@@ -34,21 +37,31 @@ const getPriorityColor = (priority: string) => {
   }
 };
 
-const onDeleteClick = async (id: number) => {
-  const supabase = browserClient();
-  const result = await supabase
-    .from('mission')
-    .update({ deleted_at: new Date().toISOString() })
-    .eq('id', id);
-
-  console.log(result);
-};
 
 function MissionListItem({
   mission,
   onCheckedChange,
   isUpdating = false,
 }: Props) {
+  const refresh = useMissionStore((state) => state.refresh);
+
+
+  const onDeleteClick = async (id: number) => {
+    const supabase = browserClient();
+    const {error} = await supabase
+      .from('mission')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) {
+      alert(`문제가 발생했습니다. 관리자한테 연락부탁드립니다. ${error.details}`)
+      console.log(error)
+      return;
+    }
+
+    refresh();
+  };
+
   return (
     <div
       className={cn(
