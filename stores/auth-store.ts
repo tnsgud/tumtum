@@ -7,15 +7,18 @@ interface LoginStateStore {
 
   setIsLoggined: (v:boolean) => void
   setUser: (v:User) => void
+
+  logout: () => void
 }
 
 const useAuthStore = create<LoginStateStore>((set) => {
   return {
-  isLoggined:false ,
-  user: null,
-  setIsLoggined: (v) => set((s) => ({...s, isLoggined:v})),
-  setUser: (v) => set((s) => ({...s, user:v})),
-} 
+    isLoggined:false ,
+    user: null,
+    setIsLoggined: (v) => set((s) => ({...s, isLoggined:v})),
+    setUser: (v) => set((s) => ({ ...s, user: v })),
+    logout: () => set({isLoggined: false, user: null})
+  } 
 })
 
 
