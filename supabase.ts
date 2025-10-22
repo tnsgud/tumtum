@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "13.0.4"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       category: {
@@ -144,6 +169,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      retrospectives: {
+        Row: {
+          content: string
+          created_at: string
+          deleted_at: string | null
+          emotion_id: number
+          id: number
+          summary: string
+          tags: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          deleted_at?: string | null
+          emotion_id: number
+          id?: number
+          summary: string
+          tags?: string | null
+          title: string
+          user_id?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          deleted_at?: string | null
+          emotion_id?: number
+          id?: number
+          summary?: string
+          tags?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "retrospectives_emotion_id_fkey"
+            columns: ["emotion_id"]
+            isOneToOne: false
+            referencedRelation: "emotion"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -279,6 +348,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },
