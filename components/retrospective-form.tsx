@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,59 +10,71 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
+import { browserClient } from '@/lib/supabase.browser';
+import { useRouter } from 'next/navigation';
+import { Tables } from '@/supabase';
 
-type Emotion = {
-  id: string;
-  emoji: string;
-  name: string;
-  color: string;
-};
+type Emotion = Pick<Tables<'emotion'>, 'id' | 'name' | 'emoji' | 'default_color' | 'dark_mode_color'>
 
 export function RetrospectiveForm() {
+  const router = useRouter();
   const [title, setTitle] = useState('');
+  const [summary, setSummary] = useState('');
   const [content, setContent] = useState('');
-  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null);
+  const [selectedEmotion, setSelectedEmotion] = useState<number | null>(null);
   const [tagInput, setTagInput] = useState('');
   const [tags, setTags] = useState<string[]>([]);
+  const [emotions, setEmotions] = useState<Emotion[]>([]);
 
-  const emotions: Emotion[] = [
-    {
-      id: 'excited',
-      emoji: '😄',
-      name: '신남',
-      color: 'bg-amber-100 dark:bg-amber-950',
-    },
-    {
-      id: 'happy',
-      emoji: '🙂',
-      name: '행복',
-      color: 'bg-emerald-100 dark:bg-emerald-950',
-    },
-    {
-      id: 'neutral',
-      emoji: '😐',
-      name: '보통',
-      color: 'bg-slate-100 dark:bg-slate-900',
-    },
-    {
-      id: 'tired',
-      emoji: '😩',
-      name: '피곤',
-      color: 'bg-purple-100 dark:bg-purple-950',
-    },
-    {
-      id: 'sad',
-      emoji: '😢',
-      name: '슬픔',
-      color: 'bg-blue-100 dark:bg-blue-950',
-    },
-    {
-      id: 'stressed',
-      emoji: '😠',
-      name: '스트레스',
-      color: 'bg-rose-100 dark:bg-rose-950',
-    },
-  ];
+  useEffect(() => {
+    async function fetchData() {
+      const supabase = browserClient();
+      const { data } = await supabase.from('emotion').select('id, name, emoji, default_color, dark_mode_color');
+      
+      setEmotions(data ?? [])
+    }
+
+    fetchData();
+  }, [])
+
+  // const emotions: Emotion[] = [
+  //   {
+  //     id: 'excited',
+  //     emoji: '😄',
+  //     name: '신남',
+  //     color: 'bg-amber-100 dark:bg-amber-950',
+  //   },
+  //   {
+  //     id: 'happy',
+  //     emoji: '🙂',
+  //     name: '행복',
+  //     color: 'bg-emerald-100 dark:bg-emerald-950',
+  //   },
+  //   {
+  //     id: 'neutral',
+  //     emoji: '😐',
+  //     name: '보통',
+  //     color: 'bg-slate-100 dark:bg-slate-900',
+  //   },
+  //   {
+  //     id: 'tired',
+  //     emoji: '😩',
+  //     name: '피곤',
+  //     color: 'bg-purple-100 dark:bg-purple-950',
+  //   },
+  //   {
+  //     id: 'sad',
+  //     emoji: '😢',
+  //     name: '슬픔',
+  //     color: 'bg-blue-100 dark:bg-blue-950',
+  //   },
+  //   {
+  //     id: 'stressed',
+  //     emoji: '😠',
+  //     name: '스트레스',
+  //     color: 'bg-rose-100 dark:bg-rose-950',
+  //   },
+  // ];
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && tagInput.trim() !== '') {
@@ -78,10 +90,28 @@ export function RetrospectiveForm() {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ title, content, emotion: selectedEmotion, tags });
+
+    if (!selectedEmotion) return;
+
     // 여기에 회고 저장 로직 추가
+    const supabase = browserClient();
+    const { error } = await supabase.from('retrospectives').insert({
+      title,
+      content,
+      summary,
+      tags: tags.join(','),
+      emotion_id: selectedEmotion,
+    })
+
+    if (error) {
+      alert(`문제가 발생했습니다. 관리자한테 문의하세요\n${error}`)
+      return;
+    }
+
+    alert('회고가 등록되었습니다.')
+    router.push('/retrospectives')
   };
 
   return (
@@ -97,6 +127,16 @@ export function RetrospectiveForm() {
         />
       </div>
 
+      <div className="space-y">
+        <Label>한줄 요약</Label>
+        <Input id="summray"
+          placeholder='회고의 한줄 요약을 입력하세요.'
+          value={summary}
+          onChange={(e) => setSummary(e.target.value)}
+          required
+        />
+      </div>
+
       <div className='space-y-2'>
         <Label>오늘의 감정</Label>
         <div className='grid grid-cols-3 sm:grid-cols-6 gap-2'>
@@ -106,10 +146,9 @@ export function RetrospectiveForm() {
               type='button'
               variant='outline'
               className={cn(
-                'flex h-auto flex-col gap-1 p-3',
-                selectedEmotion === emotion.id &&
-                  'border-2 border-rose-500 dark:border-rose-400',
-                emotion.color
+                `flex h-auto flex-col gap-1 p-3 border-2 ${emotion.default_color} dark:${emotion.dark_mode_color}`,
+                selectedEmotion === emotion.id ?
+                  `border-rose-500 dark:border-rose-400` : 'border-transparent',
               )}
               onClick={() => setSelectedEmotion(emotion.id)}
             >
