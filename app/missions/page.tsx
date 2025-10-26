@@ -7,10 +7,14 @@ import {
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { MissionList } from '@/components/mission/mission-list';
+import dynamic from 'next/dynamic';
 import AddTodoDialog from '@/components/mission/add-todo-dialog';
 import { Search } from 'lucide-react';
 import { getMissionCount } from './actions';
+import { Suspense } from 'react';
+
+const MissionList = dynamic(() => import('@/components/mission/mission-list'), {
+});
 
 export default async function MissionsPage() {
   const missionCount = await getMissionCount();
@@ -56,7 +60,9 @@ export default async function MissionsPage() {
               <TabsTrigger value='not_completed'>미완료</TabsTrigger>
             </TabsList>
             <TabsContent value='all'>
+              <Suspense>
                 <MissionList filter='all' />
+              </Suspense>
             </TabsContent>
             <TabsContent value='today'>
               <MissionList filter='today'  />

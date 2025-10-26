@@ -1,32 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { browserClient } from '@/lib/supabase.browser';
 import { MissionListItem } from './mission-list-item';
 import { dateFormat } from '@/lib/date-utils';
 import { Mission } from './types';
 import { useMissionStore } from '@/stores/mission-store';
+import useSWR from 'swr';
 
 type MissionListProps = {
   filter: 'all' | 'today' | 'upcoming' | 'completed' | 'not_completed';
-  data?: Mission[]
 };
 
-// const getMissions = async () => {
-//   const supabase = browserClient();
-//   const {data, error} = await supabase
-//     .from('mission')
-//     .select(
-//       'id, title, deadline_at, is_completed, priority, category(color, name)'
-//     )
-//     .is('deleted_at', null);
+const getMissions = async () => {
+  const supabase = browserClient();
+  const {data, error} = await supabase
+    .from('mission')
+    .select(
+      'id, title, deadline_at, is_completed, priority, category(color, name)'
+    )
+    .is('deleted_at', null);
 
-//   if (error) {
-//     throw error;
-//   }
+  if (error) throw new Error(error.message);
 
-//   return data ?? [];
-// }
+  return data ?? [];
+}
 
 function isToday(dateString: string): boolean {
   const today = dateFormat(new Date());
@@ -38,15 +36,19 @@ function isFuture(dateString: string): boolean {
   return dateString > today;
 }
 
-export function MissionList({ filter }: MissionListProps) {
-  const { missions, setMissions, refresh, init } = useMissionStore();
+export default function MissionList({ filter }: MissionListProps) {
+  const { data: missions } = useSWR('missions', getMissions, { suspense: true, fallbackData: [] });
+  const setMissions = useMissionStore(s => s.setMissions);
   const [updatingMissions, setUpdatingMissions] = useState<Set<number>>(
     new Set()
   );
 
-  if(!init){
-    refresh(true);
-  }
+  useEffect(() => { 
+    if (missions) {
+      setMissions(missions)
+    }
+  }, [missions, setMissions])
+
 
   const toggleMission = async (id: number) => {
     const mission = missions?.find((m) => m.id === id);
