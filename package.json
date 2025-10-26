@@ -52,8 +52,12 @@
     "typescript": "^5.8.3"
   },
   "lint-staged" : {
-    "*.{ts,tsx}" : {
-      "biome format"
-    }
+    "*.{ts,tsx}"     :      [
+      
+      "biome format" 
+    
+    
+    
+    ]
   }
 }
