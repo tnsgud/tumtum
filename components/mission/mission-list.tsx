@@ -1,73 +1,47 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { browserClient } from "@/lib/supabase.browser";
+import { useSearchTextStore } from "@/stores/search-text-store";
 import { MissionListItem } from "./mission-list-item";
-import { dateFormat } from "@/lib/date-utils";
-import { FilterOption, Mission } from "./types";
-import { useMissionStore } from "@/stores/mission-store";
-import useSWR from "swr";
-import { isFuture, isToday } from "date-fns";
+import { TabOption, Mission } from "./types";
+import { dateFormat, isFuture, isToday } from "@/lib/date-utils";
+import { useState } from "react";
+import { browserClient } from "@/lib/supabase.browser";
 
 type MissionListProps = {
-	filterOption: FilterOption;
-	searchText: string;
+	missions: Mission[];
+	tab: TabOption;
 };
 
-const getMissions = async () => {
-	const supabase = browserClient();
-	const { data, error } = await supabase
-		.from("mission")
-		.select(
-			"id, title, deadline_at, is_completed, priority, category(color, name)",
-		)
-		.is("deleted_at", null)
-		.order("created_at", { ascending: false });
+export default function MissionList({ missions, tab }: MissionListProps) {
+	const { searchText } = useSearchTextStore();
 
-	if (error) throw new Error(error.message);
+	function textFilter(mission: Mission) {
+		if (searchText === "") return true;
 
-	return data ?? [];
-};
-
-function optionFilter(m: Mission, filterOption: FilterOption) {
-	const missionDate = dateFormat(m.deadline_at);
-
-	switch (filterOption) {
-		case FilterOption.TODAY:
-			return isToday(missionDate);
-		case FilterOption.UPCOMING:
-			return isFuture(missionDate) && !m.is_completed;
-		case FilterOption.COMPLETED:
-			return m.is_completed;
-		case FilterOption.NOT_COMPLETED:
-			return !m.is_completed;
-		default:
-			return true;
+		return mission.title.includes(searchText);
 	}
-}
 
-function titleFilter(title: string, searchText: string) {
-	return title.includes(searchText);
-}
+	function tabFilter(mission: Mission) {
+		const date = dateFormat(mission.deadline_at);
 
-export default function MissionList({
-	filterOption,
-	searchText,
-}: MissionListProps) {
-	const { data } = useSWR("missions", getMissions, {
-		suspense: true,
-		fallbackData: [],
-	});
-	const [missions, setMissions] = useState(
-		data
-			.filter(({ title }) => titleFilter(title, searchText))
-			.filter((m) => optionFilter(m, filterOption)),
-	); // UI 업데이트 용 실제로 사용 X
+		switch (tab) {
+			case TabOption.TODAY:
+				return isToday(date);
+			case TabOption.UPCOMING:
+				return isFuture(date) && !mission.is_completed;
+			case TabOption.COMPLETED:
+				return mission.is_completed;
+			case TabOption.NOT_COMPLETED:
+				return !mission.is_completed;
+			default:
+				return true;
+		}
+	}
 	const [updatingMissions, setUpdatingMissions] = useState<Set<number>>(
 		new Set(),
 	);
 
-	const toggleMission = async (id: number) => {
+	/*const toggleMission = async (id: number) => {
 		const mission = missions?.find((m) => m.id === id);
 		if (!mission || updatingMissions.has(id)) return; // 이미 업데이트 중이면 무시
 
@@ -126,20 +100,43 @@ export default function MissionList({
 			});
 		}
 	};
+	*/
+
+	async function onChange(id: number) {
+		const mission = missions.find((m) => m.id === id);
+
+		if (!mission) return;
+
+		const newCompletedState = !mission.is_completed;
+
+		const supabase = browserClient();
+		const { error } = await supabase
+			.from("mission")
+			.update({
+				is_completed: newCompletedState,
+				completed_at: newCompletedState ? new Date().toISOString() : null,
+			})
+			.eq("id", id);
+	}
+
+	const filteredMissions = missions.filter(tabFilter).filter(textFilter);
 
 	return (
 		<div className="space-y-4">
-			{missions.length === 0 ? (
+			{searchText}
+			{filteredMissions.length === 0 ? (
 				<div className="flex flex-col items-center justify-center py-12 text-center">
 					<p className="text-muted-foreground">미션이 없습니다.</p>
 				</div>
 			) : (
-				missions.map((mission) => (
+				filteredMissions.map((mission) => (
 					<MissionListItem
 						key={`mission-item-${mission.id}`}
-						onCheckedChange={() => toggleMission(mission.id)}
 						mission={mission}
-						isUpdating={updatingMissions.has(mission.id)}
+						onCheckedChange={() => onChange(mission.id)}
+						isUpdating={false}
+						//onCheckedChange={() => toggleMission(mission.id)}
+						//isUpdating={updatingMissions.has(mission.id)}
 					/>
 				))
 			)}

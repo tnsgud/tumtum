@@ -5,7 +5,7 @@ export type Mission = Pick<
 	"id" | "title" | "deadline_at" | "is_completed" | "priority"
 > & { category: Pick<Tables<"category">, "color" | "name"> };
 
-export enum FilterOption {
+export enum TabOption {
 	ALL,
 	TODAY,
 	UPCOMING,

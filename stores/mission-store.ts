@@ -1,4 +1,4 @@
-import { FilterOption, Mission } from "@/components/mission/types";
+import { TabOption, Mission } from "@/components/mission/types";
 import { dateFormat } from "@/lib/date-utils";
 import { browserClient } from "@/lib/supabase.browser";
 import { isFuture, isToday } from "date-fns";
@@ -8,27 +8,27 @@ type State = {
 	missions: Mission[];
 	searchText: string;
 	filteredMissions: Mission[];
-	filterOption: FilterOption;
+	filterOption: TabOption;
 };
 
 type Action = {
 	setMissions: (v: Mission[]) => void;
 	setSearchText: (v: string) => void;
-	setFilterOption: (v: FilterOption) => void;
+	setFilterOption: (v: TabOption) => void;
 	refresh: () => Promise<void>;
 };
 
-function optionFilter(m: Mission, filterOption: FilterOption) {
+function optionFilter(m: Mission, filterOption: TabOption) {
 	const missionDate = dateFormat(m.deadline_at);
 
 	switch (filterOption) {
-		case FilterOption.TODAY:
+		case TabOption.TODAY:
 			return isToday(missionDate);
-		case FilterOption.UPCOMING:
+		case TabOption.UPCOMING:
 			return isFuture(missionDate) && !m.is_completed;
-		case FilterOption.COMPLETED:
+		case TabOption.COMPLETED:
 			return m.is_completed;
-		case FilterOption.NOT_COMPLETED:
+		case TabOption.NOT_COMPLETED:
 			return !m.is_completed;
 		default:
 			return true;
@@ -43,7 +43,7 @@ const useMissionStore = create<State & Action>((set, get) => ({
 	missions: [],
 	filteredMissions: [],
 	searchText: "",
-	filterOption: FilterOption.ALL,
+	filterOption: TabOption.ALL,
 	setMissions: (missions) => {
 		// const { fliterOption, searchText } = get();
 		// const missions = data.filter((m) => optionFliter(m, fliterOption)).filter(({title})=>textFliter(title, searchText))
@@ -80,7 +80,7 @@ const useMissionStore = create<State & Action>((set, get) => ({
 			return;
 		}
 
-		set({ missions: data, searchText: "", filterOption: FilterOption.ALL });
+		set({ missions: data, searchText: "", filterOption: TabOption.ALL });
 	},
 }));
 

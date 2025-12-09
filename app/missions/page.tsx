@@ -1,5 +1,3 @@
-"use client";
-
 import {
 	Card,
 	CardContent,
@@ -8,26 +6,15 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import dynamic from "next/dynamic";
 import AddTodoDialog from "@/components/mission/add-todo-dialog";
-import { Search } from "lucide-react";
-import { getMissionCount } from "./actions";
-import { ChangeEvent, Suspense, useState } from "react";
-import { FilterOption } from "@/components/mission/types";
+import { TabOption } from "@/components/mission/types";
 import MissionList from "@/components/mission/mission-list";
+import { getMissions } from "./actions";
+import { SearchInput } from "@/components/mission/search-input";
 
-// const MissionList = dynamic(() => import('@/components/mission/mission-list'), {
-// });
-
-export default function MissionsPage() {
-	// const missionCount = await getMissionCount();
-	const missionCount = 0;
-	const [searchText, setSearchText] = useState("");
-
-	const onSearchTextChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setSearchText(e.target.value);
-	};
+export default async function MissionsPage() {
+	const missions = await getMissions();
+	const missionCount = missions.length;
 
 	return (
 		<div className="space-y-6 max-sm:flex-1">
@@ -49,21 +36,12 @@ export default function MissionsPage() {
 							<CardDescription>
 								총 {missionCount}개의 미션이 있습니다.
 							</CardDescription>
-						</div>
-						<div className="relative">
-							<Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-							<Input
-								type="search"
-								value={searchText}
-								onChange={onSearchTextChange}
-								placeholder="미션 검색..."
-								className="w-full sm:w-[250px] pl-8"
-							/>
+							<SearchInput />
 						</div>
 					</div>
 				</CardHeader>
 				<CardContent>
-					<Tabs defaultValue="ALL">
+					<Tabs defaultValue="TODAY">
 						<TabsList className="mb-4">
 							<TabsTrigger value="ALL">전체</TabsTrigger>
 							<TabsTrigger value="TODAY">오늘</TabsTrigger>
@@ -71,16 +49,11 @@ export default function MissionsPage() {
 							<TabsTrigger value="COMPLETED">완료</TabsTrigger>
 							<TabsTrigger value="NOT_COMPLETED">미완료</TabsTrigger>
 						</TabsList>
-						{(Object.keys(FilterOption) as Array<keyof typeof FilterOption>)
+						{(Object.keys(TabOption) as Array<keyof typeof TabOption>)
 							.slice(5, 10)
 							.map((key) => (
 								<TabsContent key={`${key}-tab-content`} value={key}>
-									<Suspense>
-										<MissionList
-											filterOption={FilterOption[key]}
-											searchText={searchText}
-										/>
-									</Suspense>
+									<MissionList missions={missions} tab={TabOption[key]} />
 								</TabsContent>
 							))}
 					</Tabs>
