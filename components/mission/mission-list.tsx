@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { browserClient } from "@/lib/supabase.browser";
 import { MissionListItem } from "./mission-list-item";
 import { dateFormat } from "@/lib/date-utils";
-import { FliterOption, Mission } from "./types";
+import { FilterOption, Mission } from "./types";
 import { useMissionStore } from "@/stores/mission-store";
 import useSWR from "swr";
 import { isFuture, isToday } from "date-fns";
 
 type MissionListProps = {
-	fliterOption: FliterOption;
+	filterOption: FilterOption;
 	searchText: string;
 };
 
@@ -29,17 +29,17 @@ const getMissions = async () => {
 	return data ?? [];
 };
 
-function optionFilter(m: Mission, fliterOption: FliterOption) {
+function optionFilter(m: Mission, filterOption: FilterOption) {
 	const missionDate = dateFormat(m.deadline_at);
 
-	switch (fliterOption) {
-		case FliterOption.TODAY:
+	switch (filterOption) {
+		case FilterOption.TODAY:
 			return isToday(missionDate);
-		case FliterOption.UPCOMING:
+		case FilterOption.UPCOMING:
 			return isFuture(missionDate) && !m.is_completed;
-		case FliterOption.COMPLETED:
+		case FilterOption.COMPLETED:
 			return m.is_completed;
-		case FliterOption.NOT_COMPLETED:
+		case FilterOption.NOT_COMPLETED:
 			return !m.is_completed;
 		default:
 			return true;
@@ -51,7 +51,7 @@ function titleFilter(title: string, searchText: string) {
 }
 
 export default function MissionList({
-	fliterOption,
+	filterOption,
 	searchText,
 }: MissionListProps) {
 	const { data } = useSWR("missions", getMissions, {
@@ -61,7 +61,7 @@ export default function MissionList({
 	const [missions, setMissions] = useState(
 		data
 			.filter(({ title }) => titleFilter(title, searchText))
-			.filter((m) => optionFilter(m, fliterOption)),
+			.filter((m) => optionFilter(m, filterOption)),
 	); // UI 업데이트 용 실제로 사용 X
 	const [updatingMissions, setUpdatingMissions] = useState<Set<number>>(
 		new Set(),

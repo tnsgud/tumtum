@@ -1,4 +1,4 @@
-import { FliterOption, Mission } from "@/components/mission/types";
+import { FilterOption, Mission } from "@/components/mission/types";
 import { dateFormat } from "@/lib/date-utils";
 import { browserClient } from "@/lib/supabase.browser";
 import { isFuture, isToday } from "date-fns";
@@ -7,64 +7,64 @@ import { create } from "zustand";
 type State = {
 	missions: Mission[];
 	searchText: string;
-	fliteredMissions: Mission[];
-	fliterOption: FliterOption;
+	filteredMissions: Mission[];
+	filterOption: FilterOption;
 };
 
 type Action = {
 	setMissions: (v: Mission[]) => void;
 	setSearchText: (v: string) => void;
-	setFliterOption: (v: FliterOption) => void;
+	setFilterOption: (v: FilterOption) => void;
 	refresh: () => Promise<void>;
 };
 
-function optionFliter(m: Mission, fliterOption: FliterOption) {
+function optionFilter(m: Mission, filterOption: FilterOption) {
 	const missionDate = dateFormat(m.deadline_at);
 
-	switch (fliterOption) {
-		case FliterOption.TODAY:
+	switch (filterOption) {
+		case FilterOption.TODAY:
 			return isToday(missionDate);
-		case FliterOption.UPCOMING:
+		case FilterOption.UPCOMING:
 			return isFuture(missionDate) && !m.is_completed;
-		case FliterOption.COMPLETED:
+		case FilterOption.COMPLETED:
 			return m.is_completed;
-		case FliterOption.NOT_COMPLETED:
+		case FilterOption.NOT_COMPLETED:
 			return !m.is_completed;
 		default:
 			return true;
 	}
 }
 
-function titleFliter(title: string, searchText: string) {
+function titleFilter(title: string, searchText: string) {
 	return title.includes(searchText);
 }
 
 const useMissionStore = create<State & Action>((set, get) => ({
 	missions: [],
-	fliteredMissions: [],
+	filteredMissions: [],
 	searchText: "",
-	fliterOption: FliterOption.ALL,
+	filterOption: FilterOption.ALL,
 	setMissions: (missions) => {
 		// const { fliterOption, searchText } = get();
 		// const missions = data.filter((m) => optionFliter(m, fliterOption)).filter(({title})=>textFliter(title, searchText))
 
-		set({ missions, fliteredMissions: missions });
+		set({ missions, filteredMissions: missions });
 	},
 	setSearchText: (searchText) => {
-		const { fliteredMissions } = get();
-		const newFliteredMissions = fliteredMissions.filter(({ title }) =>
-			titleFliter(title, searchText),
+		const { filteredMissions: filteredMissions } = get();
+		const newFilteredMissions = filteredMissions.filter(({ title }) =>
+			titleFilter(title, searchText),
 		);
 
-		set({ fliteredMissions: newFliteredMissions, searchText });
+		set({ filteredMissions: newFilteredMissions, searchText });
 	},
-	setFliterOption: (fliterOption) => {
-		const { fliteredMissions } = get();
-		const newFliteredMissions = fliteredMissions.filter((m) =>
-			optionFliter(m, fliterOption),
+	setFilterOption: (filterOption) => {
+		const { filteredMissions } = get();
+		const newFilteredMissions = filteredMissions.filter((m) =>
+			optionFilter(m, filterOption),
 		);
 
-		set({ fliteredMissions: newFliteredMissions, fliterOption });
+		set({ filteredMissions: newFilteredMissions, filterOption });
 	},
 	refresh: async () => {
 		const supabase = browserClient();
@@ -80,7 +80,7 @@ const useMissionStore = create<State & Action>((set, get) => ({
 			return;
 		}
 
-		set({ missions: data, searchText: "", fliterOption: FliterOption.ALL });
+		set({ missions: data, searchText: "", filterOption: FilterOption.ALL });
 	},
 }));
 

@@ -14,7 +14,7 @@ import AddTodoDialog from "@/components/mission/add-todo-dialog";
 import { Search } from "lucide-react";
 import { getMissionCount } from "./actions";
 import { ChangeEvent, Suspense, useState } from "react";
-import { FliterOption } from "@/components/mission/types";
+import { FilterOption } from "@/components/mission/types";
 import MissionList from "@/components/mission/mission-list";
 
 // const MissionList = dynamic(() => import('@/components/mission/mission-list'), {
@@ -71,13 +71,13 @@ export default function MissionsPage() {
 							<TabsTrigger value="COMPLETED">완료</TabsTrigger>
 							<TabsTrigger value="NOT_COMPLETED">미완료</TabsTrigger>
 						</TabsList>
-						{(Object.keys(FliterOption) as Array<keyof typeof FliterOption>)
+						{(Object.keys(FilterOption) as Array<keyof typeof FilterOption>)
 							.slice(5, 10)
 							.map((key) => (
 								<TabsContent key={`${key}-tab-content`} value={key}>
 									<Suspense>
 										<MissionList
-											fliterOption={FliterOption[key]}
+											filterOption={FilterOption[key]}
 											searchText={searchText}
 										/>
 									</Suspense>
