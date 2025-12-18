@@ -30,8 +30,8 @@ import { DatePickerWithInput } from "../ui/date-picker-with-input";
 import { browserClient } from "@/lib/supabase.browser";
 import { Tables } from "@/supabase";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useMissionStore } from "@/stores/mission-store";
+
+import { useSWRConfig } from "swr";
 
 const addCategory = z.object({
 	category: z.string(),
@@ -43,7 +43,7 @@ const addTodoSchema = z.object({
 	title: z.string().min(1),
 	category: z.string().min(1),
 	priority: z.string().min(1),
-	deadline: z.date(),
+	deadline: z.coerce.date(),
 });
 
 type AddFormSchema = z.infer<typeof addTodoSchema>;
@@ -55,7 +55,7 @@ const priorities = [
 ];
 
 export default function AddTodoDialog() {
-	const missionRefresh = useMissionStore((state) => state.refresh);
+	const { mutate } = useSWRConfig();
 	const [categories, setCategories] = useState<Tables<"category">[]>([]);
 	const [open, setOpen] = useState(false);
 	const [addCategorDialogOpen, setAddCategoryDialogOpen] = useState(false);
@@ -75,15 +75,17 @@ export default function AddTodoDialog() {
 		},
 	});
 	const { formState } = form;
-	const isFormValid =
-		formState.isValid && Object.values(formState.dirtyFields).length === 4;
-	const router = useRouter();
+	const isFormValid = formState.isValid;
 
 	const categoryDialogOnSubmit = async (formData: AddCategorySchema) => {
+		// TODO: Color Picker 추가하기
+		const randomNumber = Math.floor(Math.random() * 16777215);
+		const hexColor = randomNumber.toString(16);
+		const fullHexColor = `#${hexColor.padStart(6, "0").toUpperCase()}`;
 		const supabase = browserClient();
 		const { error } = await supabase
 			.from("category")
-			.insert({ name: formData.category, color: "#c7fcff" });
+			.insert({ name: formData.category, color: fullHexColor });
 
 		if (error) {
 			alert("문제가 발생했으니 관리자한테 문의하세요.");
@@ -118,10 +120,9 @@ export default function AddTodoDialog() {
 			console.error("미션 저장 오류:", error);
 		} else {
 			// 성공 시 dialog 닫기
-			router.refresh();
+			mutate("missions");
 			setOpen(false);
 			form.reset();
-			missionRefresh();
 		}
 	};
 

@@ -1,3 +1,5 @@
+"use client";
+
 import {
 	Card,
 	CardContent,
@@ -11,10 +13,11 @@ import { TabOption } from "@/components/mission/types";
 import MissionList from "@/components/mission/mission-list";
 import { getMissions } from "./actions";
 import { SearchInput } from "@/components/mission/search-input";
+import useSWR from "swr";
 
-export default async function MissionsPage() {
-	const missions = await getMissions();
-	const missionCount = missions.length;
+export default function MissionsPage() {
+	const { data } = useSWR("missions", getMissions);
+	const missionCount = data?.length ?? 0;
 
 	return (
 		<div className="space-y-6 max-sm:flex-1">
@@ -53,7 +56,7 @@ export default async function MissionsPage() {
 							.slice(5, 10)
 							.map((key) => (
 								<TabsContent key={`${key}-tab-content`} value={key}>
-									<MissionList missions={missions} tab={TabOption[key]} />
+									<MissionList missions={data ?? []} tab={TabOption[key]} />
 								</TabsContent>
 							))}
 					</Tabs>

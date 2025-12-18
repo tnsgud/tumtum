@@ -1,7 +1,7 @@
-import { serverClient } from "@/lib/supabase.server";
+import { browserClient } from "@/lib/supabase.browser";
 
 const getMissions = async () => {
-	const supabase = await serverClient();
+	const supabase = browserClient();
 	const { data } = await supabase
 		.from("mission")
 		.select(
