@@ -17,6 +17,9 @@ import useSWR from "swr";
 
 export default function MissionsPage() {
 	const { data } = useSWR("missions", getMissions);
+	/**
+	 * TODO: 필터링된 데이터 기준 값으로 될 수 있도록 변경하기변경하기
+	 */
 	const missionCount = data?.length ?? 0;
 
 	return (
