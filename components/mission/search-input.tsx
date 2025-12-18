@@ -9,7 +9,7 @@ const DELAY = 250;
 
 function SearchInput() {
 	const [text, setText] = useState("");
-	const { setSearchText } = useSearchTextStore();
+	const setSearchText = useSearchTextStore((state) => state.setSearchText);
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
