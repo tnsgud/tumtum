@@ -1,11 +1,12 @@
+import { Todo } from "@/components/todo/types";
 import { browserClient } from "@/lib/supabase.browser";
 
-const getMissions = async () => {
+const getTodos = async (): Promise<Todo[]> => {
 	const supabase = browserClient();
 	const { data } = await supabase
-		.from("mission")
+		.from("todo")
 		.select(
-			"id, title, deadline_at, is_completed, priority, category(color, name)",
+			"id, title, deadline_at, is_completed, priority, category:todo_category(color, name)",
 		)
 		.is("deleted_at", null)
 		.order("created_at", { ascending: false });
@@ -15,4 +16,4 @@ const getMissions = async () => {
 	return data;
 };
 
-export { getMissions };
+export { getTodos };

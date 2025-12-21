@@ -56,7 +56,7 @@ const priorities = [
 
 export default function AddTodoDialog() {
 	const { mutate } = useSWRConfig();
-	const [categories, setCategories] = useState<Tables<"category">[]>([]);
+	const [categories, setCategories] = useState<Tables<"todo_category">[]>([]);
 	const [open, setOpen] = useState(false);
 	const [addCategorDialogOpen, setAddCategoryDialogOpen] = useState(false);
 	const addCategoryForm = useForm<AddCategorySchema>({
@@ -84,7 +84,7 @@ export default function AddTodoDialog() {
 		const fullHexColor = `#${hexColor.padStart(6, "0").toUpperCase()}`;
 		const supabase = browserClient();
 		const { error } = await supabase
-			.from("category")
+			.from("todo_category")
 			.insert({ name: formData.category, color: fullHexColor });
 
 		if (error) {
@@ -94,7 +94,7 @@ export default function AddTodoDialog() {
 			return;
 		}
 
-		const { data } = await supabase.from("category").select("*");
+		const { data } = await supabase.from("todo_category").select("*");
 		setCategories(data ?? []);
 
 		addCategoryForm.reset();
@@ -108,7 +108,7 @@ export default function AddTodoDialog() {
 		deadlineDate.setHours(0, 0, 0, 0); // 로컬 타임존 기준으로 자정으로 설정
 
 		const supabase = await browserClient();
-		const { error } = await supabase.from("mission").insert({
+		const { error } = await supabase.from("todo").insert({
 			title: formData.title,
 			category_id: Number(formData.category),
 			deadline_at: deadlineDate.toISOString(),
@@ -129,7 +129,7 @@ export default function AddTodoDialog() {
 	useEffect(() => {
 		async function fetchData() {
 			const supabase = browserClient();
-			const { data } = await supabase.from("category").select("*");
+			const { data } = await supabase.from("todo_category").select("*");
 
 			setCategories(data ?? []);
 		}

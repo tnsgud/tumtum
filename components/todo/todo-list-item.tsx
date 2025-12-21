@@ -12,7 +12,7 @@ import {
 import { MoreHorizontal, Edit, Trash2, Calendar, Check } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { Mission } from "./types";
+import { Todo } from "./types";
 import { dateFormat } from "@/lib/date-utils";
 import { browserClient } from "@/lib/supabase.browser";
 import { getTextColorFromBackground } from "@/lib/ui-utils";
@@ -21,7 +21,7 @@ import { Input } from "../ui/input";
 import { useSWRConfig } from "swr";
 
 interface Props {
-	mission: Mission;
+	mission: Todo;
 	onCheckedChange: () => void;
 	isUpdating?: boolean;
 }
@@ -51,7 +51,7 @@ function MissionListItem({
 	const onEditCompltedClick = async () => {
 		const supabase = browserClient();
 		const { error } = await supabase
-			.from("mission")
+			.from("todo")
 			.update({
 				title: editTitle,
 				updated_at: new Date().toISOString(),
@@ -76,7 +76,7 @@ function MissionListItem({
 	const onDeleteClick = async (id: number) => {
 		const supabase = browserClient();
 		const { error } = await supabase
-			.from("mission")
+			.from("todo")
 			.update({ deleted_at: new Date().toISOString() })
 			.eq("id", id);
 

@@ -1,26 +1,25 @@
 "use client";
 
 import { useSearchTextStore } from "@/stores/search-text-store";
-import { MissionListItem } from "./mission-list-item";
-import { TabOption, Mission } from "./types";
+import { MissionListItem } from "./todo-list-item";
+import { TabOption, Todo } from "./types";
 import { dateFormat, isFuture, isToday } from "@/lib/date-utils";
 import { useEffect, useState } from "react";
 import { browserClient } from "@/lib/supabase.browser";
 import { useSWRConfig } from "swr";
 import { useMissionCount } from "@/stores/mission-count-store";
-import { set } from "date-fns";
 
 type MissionListProps = {
-	missions: Mission[];
+	todos: Todo[];
 	tab: TabOption;
 };
 
-export default function MissionList({ missions, tab }: MissionListProps) {
+export default function MissionList({ todos, tab }: MissionListProps) {
 	const searchText = useSearchTextStore((state) => state.searchText);
 	const setMissionCount = useMissionCount((state) => state.setCount);
 	const { mutate } = useSWRConfig();
 
-	function tabFilter(mission: Mission) {
+	function tabFilter(mission: Todo) {
 		const date = dateFormat(mission.deadline_at);
 
 		switch (tab) {
@@ -40,7 +39,7 @@ export default function MissionList({ missions, tab }: MissionListProps) {
 		new Set(),
 	);
 
-	const filteredMissions = missions
+	const filteredMissions = todos
 		.filter(tabFilter)
 		.filter((m) => m.title.toLowerCase().includes(searchText.toLowerCase()));
 
@@ -54,7 +53,7 @@ export default function MissionList({ missions, tab }: MissionListProps) {
 
 		const supabase = browserClient();
 		const { error } = await supabase
-			.from("mission")
+			.from("todo")
 			.update({
 				is_completed: newCompletedState,
 				completed_at: newCompletedState ? new Date().toISOString() : null,
@@ -89,8 +88,6 @@ export default function MissionList({ missions, tab }: MissionListProps) {
 						mission={mission}
 						onCheckedChange={() => toggleMission(mission.id)}
 						isUpdating={updatingMissions.has(mission.id)}
-						//onCheckedChange={() => toggleMission(mission.id)}
-						//isUpdating={updatingMissions.has(mission.id)}
 					/>
 				))
 			)}

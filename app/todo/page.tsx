@@ -8,25 +8,25 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import AddTodoDialog from "@/components/mission/add-todo-dialog";
-import { TabOption } from "@/components/mission/types";
-import MissionList from "@/components/mission/mission-list";
-import { getMissions } from "./actions";
-import { SearchInput } from "@/components/mission/search-input";
+import AddTodoDialog from "@/components/todo/add-todo-dialog";
+import { TabOption } from "@/components/todo/types";
+import MissionList from "@/components/todo/todo-list";
+import { getTodos } from "./actions";
+import { SearchInput } from "@/components/todo/search-input";
 import useSWR from "swr";
 import { useMissionCount } from "@/stores/mission-count-store";
 
 export default function MissionsPage() {
-	const { data } = useSWR("missions", getMissions);
+	const { data } = useSWR("missions", getTodos);
 	const missionCount = useMissionCount((state) => state.count);
 
 	return (
 		<div className="space-y-6 max-sm:flex-1">
 			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 				<div>
-					<h1 className="text-3xl font-bold tracking-tight">미션 관리</h1>
+					<h1 className="text-3xl font-bold tracking-tight">텀투두</h1>
 					<p className="text-muted-foreground">
-						나의 성장을 위한 미션을 관리해보세요.
+						나의 성장을 위한 할 일을 관리해보세요.
 					</p>
 				</div>
 				<AddTodoDialog />
@@ -57,7 +57,7 @@ export default function MissionsPage() {
 							.slice(5, 10)
 							.map((key) => (
 								<TabsContent key={`${key}-tab-content`} value={key}>
-									<MissionList missions={data ?? []} tab={TabOption[key]} />
+									<MissionList todos={data ?? []} tab={TabOption[key]} />
 								</TabsContent>
 							))}
 					</Tabs>
