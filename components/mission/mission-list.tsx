@@ -7,6 +7,8 @@ import { dateFormat, isFuture, isToday } from "@/lib/date-utils";
 import { useEffect, useState } from "react";
 import { browserClient } from "@/lib/supabase.browser";
 import { useSWRConfig } from "swr";
+import { useMissionCount } from "@/stores/mission-count-store";
+import { set } from "date-fns";
 
 type MissionListProps = {
 	missions: Mission[];
@@ -15,6 +17,7 @@ type MissionListProps = {
 
 export default function MissionList({ missions, tab }: MissionListProps) {
 	const searchText = useSearchTextStore((state) => state.searchText);
+	const setMissionCount = useMissionCount((state) => state.setCount);
 	const { mutate } = useSWRConfig();
 
 	function tabFilter(mission: Mission) {
@@ -68,6 +71,10 @@ export default function MissionList({ missions, tab }: MissionListProps) {
 
 		mutate("missions");
 	}
+
+	useEffect(() => {
+		setMissionCount(filteredMissions.length);
+	}, []);
 
 	return (
 		<div className="space-y-4">

@@ -14,13 +14,11 @@ import MissionList from "@/components/mission/mission-list";
 import { getMissions } from "./actions";
 import { SearchInput } from "@/components/mission/search-input";
 import useSWR from "swr";
+import { useMissionCount } from "@/stores/mission-count-store";
 
 export default function MissionsPage() {
 	const { data } = useSWR("missions", getMissions);
-	/**
-	 * TODO: 필터링된 데이터 기준 값으로 될 수 있도록 변경하기변경하기
-	 */
-	const missionCount = data?.length ?? 0;
+	const missionCount = useMissionCount((state) => state.count);
 
 	return (
 		<div className="space-y-6 max-sm:flex-1">
