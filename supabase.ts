@@ -87,14 +87,13 @@ export type Database = {
 				};
 				Relationships: [];
 			};
-			quiz_category: {
+			position: {
 				Row: {
 					color: string;
 					created_at: string;
 					deleted_at: string | null;
 					id: string;
 					name: string;
-					updated_at: string | null;
 				};
 				Insert: {
 					color: string;
@@ -102,7 +101,6 @@ export type Database = {
 					deleted_at?: string | null;
 					id?: string;
 					name: string;
-					updated_at?: string | null;
 				};
 				Update: {
 					color?: string;
@@ -110,7 +108,6 @@ export type Database = {
 					deleted_at?: string | null;
 					id?: string;
 					name?: string;
-					updated_at?: string | null;
 				};
 				Relationships: [];
 			};
@@ -194,7 +191,7 @@ export type Database = {
 						foreignKeyName: "subjective_quiz_category_id_fkey";
 						columns: ["category_id"];
 						isOneToOne: false;
-						referencedRelation: "quiz_category";
+						referencedRelation: "position";
 						referencedColumns: ["id"];
 					},
 				];

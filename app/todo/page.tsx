@@ -17,6 +17,7 @@ import useSWR from "swr";
 import { useMissionCount } from "@/stores/mission-count-store";
 
 export default function MissionsPage() {
+	// server supabase로 실행 가능한지 확인하기
 	const { data } = useSWR("missions", getTodos);
 	const missionCount = useMissionCount((state) => state.count);
 
