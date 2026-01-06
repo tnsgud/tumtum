@@ -120,7 +120,7 @@ export default function AddTodoDialog() {
 			console.error("미션 저장 오류:", error);
 		} else {
 			// 성공 시 dialog 닫기
-			mutate("missions");
+			mutate("todos");
 			setOpen(false);
 			form.reset();
 		}

@@ -1,30 +1,28 @@
-'use client'
+"use client";
 
-import { browserClient } from "@/lib/supabase.browser"
-import { Button } from "../ui/button"
-import { useRouter } from "next/navigation"
-import { useAuthStore } from "@/stores/auth-store"
+import { logout } from "@/app/login/actions";
+import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 const SignOutButton = () => {
-  const router = useRouter();
-  const logout = useAuthStore((s) => s.logout);
+	const router = useRouter();
 
-  const onClick = async () => {
-    const sb = browserClient();
-    const { error } = await sb.auth.signOut();
+	const onClick = async () => {
+		const { error } = await logout();
+		if (error) {
+			alert("문제가 발생했습니다. 관리자한테 문의해주세요.");
+			return;
+		}
 
-    if (error) {
-      alert('문제가 발생했습니다. 관리자한테 문의해주세요.')
-      return;
-    }
+		alert("로그아웃 되었습니다.");
+		router.replace("/");
+	};
 
-    alert('로그아웃 되었습니다.')
-    logout();
-    router.replace('/')
-  }
+	return (
+		<Button variant={"outline"} onClick={onClick}>
+			로그아웃
+		</Button>
+	);
+};
 
-  return <Button variant={'outline'} onClick={onClick}>로그아웃</Button>
-}
-
-
-export {SignOutButton}
+export { SignOutButton };

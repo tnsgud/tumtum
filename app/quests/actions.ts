@@ -1,11 +1,8 @@
 "use server";
 
 import { Quest } from "@/components/quest/types";
-import { serverClient } from "@/lib/supabase.server";
 
 const getQuest = async (): Promise<{ quests: Quest[]; percent: number }> => {
-	const supabase = await serverClient();
-
 	// 이건 퀴즈를 뽑는 쿼리
 	// const { error} = await supabase.from('subjective_quiz').select('id, question, explanation, answer, category:quiz_category(id, color, name)')
 

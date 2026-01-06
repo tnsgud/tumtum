@@ -10,15 +10,16 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AddTodoDialog from "@/components/todo/add-todo-dialog";
 import { TabOption } from "@/components/todo/types";
-import MissionList from "@/components/todo/todo-list";
+import TodoList from "@/components/todo/todo-list";
 import { getTodos } from "./actions";
 import { SearchInput } from "@/components/todo/search-input";
 import useSWR from "swr";
 import { useMissionCount } from "@/stores/mission-count-store";
+import { SWRProvider } from "@/components/swr-provider";
 
-export default function MissionsPage() {
+export default function Page() {
 	// server supabase로 실행 가능한지 확인하기
-	const { data } = useSWR("missions", getTodos);
+	const { data } = useSWR("todos", getTodos);
 	const missionCount = useMissionCount((state) => state.count);
 
 	return (
@@ -54,13 +55,15 @@ export default function MissionsPage() {
 							<TabsTrigger value="COMPLETED">완료</TabsTrigger>
 							<TabsTrigger value="NOT_COMPLETED">미완료</TabsTrigger>
 						</TabsList>
-						{(Object.keys(TabOption) as Array<keyof typeof TabOption>)
-							.slice(5, 10)
-							.map((key) => (
-								<TabsContent key={`${key}-tab-content`} value={key}>
-									<MissionList todos={data ?? []} tab={TabOption[key]} />
-								</TabsContent>
-							))}
+						<SWRProvider>
+							{(Object.keys(TabOption) as Array<keyof typeof TabOption>)
+								.slice(5, 10)
+								.map((key) => (
+									<TabsContent key={`${key}-tab-content`} value={key}>
+										<TodoList tab={TabOption[key]} />
+									</TabsContent>
+								))}
+						</SWRProvider>
 					</Tabs>
 				</CardContent>
 			</Card>

@@ -5,19 +5,18 @@ import { MissionListItem } from "./todo-list-item";
 import { TabOption, Todo } from "./types";
 import { dateFormat, isFuture, isToday } from "@/lib/date-utils";
 import { useEffect, useState } from "react";
-import { browserClient } from "@/lib/supabase.browser";
-import { useSWRConfig } from "swr";
+import useSWR from "swr";
 import { useMissionCount } from "@/stores/mission-count-store";
+import { getTodos, updateTodoCompleted } from "@/app/todo/actions";
 
 type MissionListProps = {
-	todos: Todo[];
 	tab: TabOption;
 };
 
-export default function MissionList({ todos, tab }: MissionListProps) {
+export default function TodoList({ tab }: MissionListProps) {
 	const searchText = useSearchTextStore((state) => state.searchText);
-	const setMissionCount = useMissionCount((state) => state.setCount);
-	const { mutate } = useSWRConfig();
+	const setTodoCount = useMissionCount((state) => state.setCount);
+	const { data: todos, mutate } = useSWR("todos", getTodos);
 
 	function tabFilter(mission: Todo) {
 		const date = dateFormat(mission.deadline_at);
@@ -35,59 +34,56 @@ export default function MissionList({ todos, tab }: MissionListProps) {
 				return true;
 		}
 	}
-	const [updatingMissions, setUpdatingMissions] = useState<Set<number>>(
-		new Set(),
-	);
+	const [updatingTodos, setUpdatingTodos] = useState<Set<number>>(new Set());
 
-	const filteredMissions = todos
-		.filter(tabFilter)
-		.filter((m) => m.title.toLowerCase().includes(searchText.toLowerCase()));
+	const filteredTodos =
+		todos
+			?.filter(tabFilter)
+			.filter((m) =>
+				m.title.toLowerCase().includes(searchText.toLowerCase()),
+			) ?? [];
 
-	async function toggleMission(id: number) {
-		const mission = filteredMissions.find((m) => m.id === id);
+	async function toggleTodo(id: number) {
+		const mission = filteredTodos.find((m) => m.id === id);
 
 		if (!mission) return;
 
-		setUpdatingMissions((prev) => new Set(prev).add(id));
+		setUpdatingTodos((prev) => new Set(prev).add(id));
+
 		const newCompletedState = !mission.is_completed;
+		const completedAt = newCompletedState ? new Date().toISOString() : null;
+		const data = await updateTodoCompleted({
+			completed_at: completedAt,
+			is_completed: newCompletedState,
+			id: mission.id,
+		});
 
-		const supabase = browserClient();
-		const { error } = await supabase
-			.from("todo")
-			.update({
-				is_completed: newCompletedState,
-				completed_at: newCompletedState ? new Date().toISOString() : null,
-			})
-			.eq("id", id);
+		mutate();
 
-		if (error) return;
-
-		setUpdatingMissions((prev) => {
+		setUpdatingTodos((prev) => {
 			const newSet = new Set(prev);
 			newSet.delete(id);
 			return newSet;
 		});
-
-		mutate("missions");
 	}
 
 	useEffect(() => {
-		setMissionCount(filteredMissions.length);
+		setTodoCount(filteredTodos.length);
 	}, []);
 
 	return (
 		<div className="space-y-4">
-			{filteredMissions.length === 0 ? (
+			{filteredTodos.length === 0 ? (
 				<div className="flex flex-col items-center justify-center py-12 text-center">
-					<p className="text-muted-foreground">미션이 없습니다.</p>
+					<p className="text-muted-foreground">할 일이 없습니다.</p>
 				</div>
 			) : (
-				filteredMissions.map((mission) => (
+				filteredTodos.map((mission) => (
 					<MissionListItem
 						key={`mission-item-${mission.id}`}
 						mission={mission}
-						onCheckedChange={() => toggleMission(mission.id)}
-						isUpdating={updatingMissions.has(mission.id)}
+						onCheckedChange={() => toggleTodo(mission.id)}
+						isUpdating={updatingTodos.has(mission.id)}
 					/>
 				))
 			)}

@@ -10,17 +10,14 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { serverClient } from "@/lib/supabase.server";
 import { ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import { DailyQuestSkeleton } from "@/components/quest/daily-quest-skeleton";
+import { getUser } from "../auth/actions";
 
 export default async function Home() {
-	const supabase = await serverClient();
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
+	const user = await getUser();
 
 	return (
 		//  px-4
