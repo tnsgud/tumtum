@@ -1,6 +1,7 @@
+"use server";
+
 import { serverClient } from "@/lib/supabase.server";
 import { cache } from "react";
-import { getUser } from "../auth/actions";
 import { User } from "@supabase/supabase-js";
 
 /**
