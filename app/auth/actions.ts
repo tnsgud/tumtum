@@ -17,8 +17,23 @@ export async function getUser() {
 	return user;
 }
 
-export async function userLoginCheck(): Promise<boolean> {
-	const user = await getUser();
+export async function getSession() {
+	const supabase = await serverClient();
+	const {
+		data: { session },
+		error,
+	} = await supabase.auth.getSession();
 
-	return user !== null;
+	if (error) {
+		console.log(error);
+		throw error;
+	}
+
+	return session;
+}
+
+export async function userLoginCheck(): Promise<boolean> {
+	const session = await getSession();
+
+	return session !== null;
 }
